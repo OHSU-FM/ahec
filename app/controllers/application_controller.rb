@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   before_action :dynamic_destroy, only: :update
   helper_method :auto_path
   before_action :store_current_location, unless: :devise_controller?
+  before_action :configure_permitted_parameters, if: :devise_controller?
 
   rescue_from DeviseLdapAuthenticatable::LdapException do |exception|
     flash[:alert] = 'Unable to reach authentication server'
@@ -32,6 +33,12 @@ class ApplicationController < ActionController::Base
       format.html { render 'errors/not_authorized', status: 403, layout: 'full_width_margins' }
       format.js { render json: { message: 'Not Authorized' }, status: 403 }
     end
+  end
+
+  protected
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:accept_invitation, keys: [:username, :iniviation_token])
   end
 
   private
