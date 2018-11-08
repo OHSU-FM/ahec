@@ -9,6 +9,8 @@ gem "rdoc"
 gem 'whenever', require: false
 gem 'nested_form_fields'
 gem 'turbolinks', '~> 5.0', '>= 5.0.1'
+gem 'devise_invitable'
+
 
 # Database
 gem "pg"
@@ -112,6 +114,7 @@ group :development do
   gem "puma"
   gem "rails_layout"
   gem "awesome_print"
+  gem "letter_opener"
 
   # Interactive debugging from the web
   gem "binding_of_caller"

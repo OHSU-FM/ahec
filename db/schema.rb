@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161013195312) do
+ActiveRecord::Schema.define(version: 2018_10_31_183437) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -197,18 +197,30 @@ ActiveRecord::Schema.define(version: 20161013195312) do
     t.text     "roles"
     t.string   "username"
     t.datetime "locked_at"
-    t.string   "full_name"
-    t.boolean  "is_ldap",                default: false
-    t.integer  "permission_group_id"
-    t.integer  "cohort_id"
-    t.string   "ls_list_state",          default: "dirty"
-    t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
-    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
-    t.index ["username"], name: "index_users_on_username", unique: true, using: :btree
+    t.string "full_name"
+    t.boolean "is_ldap", default: false
+    t.integer "permission_group_id"
+    t.integer "cohort_id"
+    t.string "ls_list_state", default: "dirty"
+    t.string "invitation_token"
+    t.datetime "invitation_created_at"
+    t.datetime "invitation_sent_at"
+    t.datetime "invitation_accepted_at"
+    t.integer "invitation_limit"
+    t.string "invited_by_type"
+    t.bigint "invited_by_id"
+    t.integer "invitations_count", default: 0
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
+    t.index ["invitations_count"], name: "index_users_on_invitations_count"
+    t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
+    t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["username"], name: "index_users_on_username", unique: true
   end
 
-  create_table "version_notes", force: :cascade do |t|
-    t.text     "note"
+  create_table "version_notes", id: :serial, force: :cascade do |t|
+    t.text "note"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

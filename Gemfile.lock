@@ -91,6 +91,9 @@ GEM
       railties (>= 4.1.0, < 6.0)
       responders
       warden (~> 1.2.3)
+    devise_invitable (1.7.5)
+      actionmailer (>= 4.1.0)
+      devise (>= 4.0.0)
     devise_ldap_authenticatable (0.8.6)
       devise (>= 3.4.1)
       net-ldap (>= 0.16.0)
@@ -151,6 +154,8 @@ GEM
       activerecord
       kaminari-core (= 1.1.1)
     kaminari-core (1.1.1)
+    launchy (2.4.3)
+      addressable (~> 2.3)
     less (2.6.0)
       commonjs (~> 0.2.7)
     less-rails (2.8.0)
@@ -158,6 +163,8 @@ GEM
       less (~> 2.6.0)
       sprockets (> 2, < 4)
       tilt
+    letter_opener (1.6.0)
+      launchy (~> 2.2)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -369,6 +376,7 @@ DEPENDENCIES
   composite_primary_keys (~> 11.0)
   descriptive-statistics
   devise
+  devise_invitable
   devise_ldap_authenticatable
   exception_notification
   factory_bot_rails
@@ -380,6 +388,7 @@ DEPENDENCIES
   jquery-ui-rails
   json
   kaminari
+  letter_opener
   lograge
   nested_form_fields
   paper_trail
