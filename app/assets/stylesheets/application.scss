@@ -9,12 +9,14 @@
  * compiled file, but it's generally better to create a new file per style scope.
  */
 @import 'jquery-ui';
+@import 'variables';
 @import 'bootstrap-sprockets';
 @import 'bootstrap';
 @import 'select2';
 @import 'bootstrap-growl';
 @import 'bootstrap-mods';
 @import 'bootstrap-callouts';
+@import '_bootswatch';
 @import 'introjs';
 @import 'animations';
 @import 'font-awesome';

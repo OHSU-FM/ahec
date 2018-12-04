@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
 
   accepts_nested_attributes_for :user_externals, allow_destroy: true
 
-  validates_presence_of :encrypted_password, :password, :ls_list_state
+  validates_presence_of :encrypted_password, :ls_list_state
   validates_presence_of :username, uniqueness: { case_sensitive: false }
   validates_presence_of :email, uniqueness: { case_sensitive: false }
   validates :ls_list_state, inclusion: {
@@ -34,7 +34,7 @@ class User < ActiveRecord::Base
   validate :password_complexity
 
   def password_complexity
-    return if password.blank? || password =~ /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,30}$/
+    return if password =~ /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,30}$/
 
     errors.add :password, 'Complexity requirement not met. Length should be 8-30 characters and include: 1 uppercase, 1 lowercase, 1 digit and 1 special character'
   end
