@@ -1,6 +1,19 @@
-#login-banner img {
+@import 'variables';
+
+.login-photo img {
+  display: block;
+  margin: auto;
+  height: 190px;
+  width:auto;
+}
+
+.login-logo img{
   display: block;
   margin: auto;
   width:100%;
-  max-width:700px;
+}
+
+.y2-padding {
+  padding-top: ($spacer * .5) !important;
+  padding-bottom: ($spacer * .5) !important;
 }
