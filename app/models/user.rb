@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
 
   accepts_nested_attributes_for :user_externals, allow_destroy: true
 
-  validates_presence_of :encrypted_password, :ls_list_state
+  validates_presence_of :encrypted_password, :ls_list_state, :full_name
   validates_presence_of :username, uniqueness: { case_sensitive: false }
   validates_presence_of :email, uniqueness: { case_sensitive: false }
   validates :ls_list_state, inclusion: {

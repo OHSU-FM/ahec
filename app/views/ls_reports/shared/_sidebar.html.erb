@@ -4,7 +4,7 @@ full_desc = opts[:full_desc]
 hide_arr_flex = opts[:hide_arr_flex]
 %>
 <% cache([@role_aggregate, virtual_groups, opts]) do %>
-  <%= image_tag Settings.site.logo, :size=>"400x250" %>
+  <%= image_tag Settings.site.logo %>
   <div id="scroll-spy-nav" class="hidden-print affix-top hidden-sm hidden-xs" role="complementary" data-spy="affix" data-offset-top="380">
     <ul class="nav">
       <li><a href="#top">Top of page</a></li>

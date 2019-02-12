@@ -7,14 +7,14 @@ content_for :messages do %>
     <div class="col-md-4 login-photo">
       <%= image_tag 'ahec_east_clinic' %>
     </div>
-    <div class="col-md-4 login-logo y2-padding">
+    <div class="col-md-4 login-logo">
       <%= image_tag Settings.site.logo, alt: Settings.site.name %>
     </div>
     <div class="col-md-4 login-photo">
       <%= image_tag 'ne_ahec_class' %>
     </div>
   </div>
-  <div class="row y2-padding">
+  <div class="row">
     <div class="col-md-offset-2 col-md-8">
       <h1 class="text-center">
         <b>
@@ -23,7 +23,7 @@ content_for :messages do %>
       </h1>
     </div>
   </div>
-  <div class="row">
+  <div class="row y2-padding">
     <div class="col-md-4 login-photo">
       <%= image_tag 'ahec_scholars_logo' %>
     </div>
@@ -37,6 +37,7 @@ content_for :messages do %>
           </div>
           <div class="form-group">
             <%= f.label :password %>
+            <%= link_to("(Forgot Password)", new_user_password_path, id:"forget-password", class:"forget-password") %>
             <%= f.password_field :password, class: "form-control", placeholder: "Password" %>
           </div>
           <div class="checkbox">
