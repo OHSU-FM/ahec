@@ -47,4 +47,3 @@
 //= require simplemde.min
 //= require nested_form_fields
 //= require cable
-//= reqiore turbolinks
