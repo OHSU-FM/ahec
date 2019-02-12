@@ -38,7 +38,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:accept_invitation, keys: [:username, :iniviation_token])
+    devise_parameter_sanitizer.permit(:accept_invitation, keys: [:username, :full_name, :iniviation_token])
   end
 
   private
