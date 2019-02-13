@@ -132,7 +132,7 @@ Devise.setup do |config|
   # The key to be used to check existing users when sending an invitation
   # and the regexp used to test it when validate_on_invite is not set.
   # config.invite_key = {:email => /\A[^@]+@[^@]+\z/}
-  # config.invite_key = {:email => /\A[^@]+@[^@]+\z/, :username => nil}
+  # config.invite_key = { :email => /\A[^@]+@[^@]+\z/ }
 
   # Flag that force a record to be valid before being actually invited
   # Default: false
@@ -315,4 +315,9 @@ Devise.setup do |config|
   # When using omniauth, Devise cannot automatically set Omniauth path,
   # so you need to do it manually. For the users scope, it would be:
   # config.omniauth_path_prefix = "/my_engine/users/auth"
+end
+
+Rails.application.config.to_prepare do
+  # Configure devise mailer layout
+  Devise::Mailer.layout "email"
 end
