@@ -31,12 +31,16 @@ class User < ActiveRecord::Base
     message: "%{value} must be one of dirty or clean"
   }
 
-  validate :password_complexity
+  validate :password_complexity, if: :update_password?
 
   def password_complexity
     return if password =~ /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,30}$/
 
     errors.add :password, 'Complexity requirement not met. Length should be 8-30 characters and include: 1 uppercase, 1 lowercase, 1 digit and 1 special character'
+  end
+
+  def update_password?
+    new_record? || !password.nil?
   end
 
   # Assign roles to a user like this:
@@ -186,8 +190,6 @@ class User < ActiveRecord::Base
       field :email
       field :username
       field :full_name
-      field :password
-      field :password_confirmation
       field :is_ldap
       field :cohort
     end
