@@ -83,7 +83,7 @@ class Ability
       # But will throw an error on the view (handled in dashboard/ ls_reports:index etc..)
       if user.permission_group_id.present?
         plg = user.permission_group.permission_ls_groups.where(lime_survey_sid: lime_survey.sid).first
-        plg.present? && plg.ready_for_use?
+        plg.present? && plg.ready_for_use
       else
         false
       end
@@ -93,7 +93,7 @@ class Ability
       if user.permission_group_id.present?
         if user.lime_surveys.include? lime_survey
           plg = user.permission_group.permission_ls_groups.where(lime_survey_sid: lime_survey.sid).first
-          (plg.present? && plg.ready_for_use? && plg.view_all) ? true : false
+          (plg.present? && plg.ready_for_use && plg.view_all) ? true : false
         else
           false
         end
@@ -107,7 +107,7 @@ class Ability
         has_ls = user.role_aggregates.map{|ra| ra.lime_survey_sid }.include? lime_survey.sid
         if user.lime_surveys.include? lime_survey
           plg = user.permission_group.permission_ls_groups.where(lime_survey_sid: lime_survey.sid).first
-          (plg.present? && plg.ready_for_use? && plg.view_raw) ? true : false
+          (plg.present? && plg.ready_for_use && plg.view_raw) ? true : false
         else
           false
         end

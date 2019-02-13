@@ -74,7 +74,7 @@ class PermissionGroup < ActiveRecord::Base
   def explain_role_aggregates_for user
     details = []
     result = role_aggregates.select{|ra|
-      ready = ra.ready_for_use?
+      ready = ra.ready_for_use
       details.push([ra, 'RA not ready for use']) unless ready
       ready
     }
@@ -83,7 +83,7 @@ class PermissionGroup < ActiveRecord::Base
     uex = user.user_externals
     permission_ls_groups.each do |plg|
       ra = plg.lime_survey.role_aggregate
-      unless plg.ready_for_use?
+      unless plg.ready_for_use
         unless ra.nil?
           details.push([ra, 'Permission ls group not ready for use'])
         end

@@ -32,9 +32,9 @@ class RoleAggregate < ActiveRecord::Base
             .sort_by {|e| e[0] }
         end
       end
-      #field :ready_for_use? do
-      #  read_only true
-      #end
+      field :ready_for_use do
+       read_only true
+      end
 
       group 'Primary Filter' do
         field :pk_label
@@ -55,7 +55,7 @@ class RoleAggregate < ActiveRecord::Base
 
   end
 
-  def ready_for_use?
+  def ready_for_use
     agg_question.present? && pk_question.present? && data_table_exists?
   end
 

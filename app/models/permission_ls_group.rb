@@ -19,7 +19,7 @@ class PermissionLsGroup < ActiveRecord::Base
       if !role_aggregate.present?
         # Must explicitly allow view_all, or have filters
         errors.add(:enabled, 'No role_aggregate defined')
-      elsif !role_aggregate.ready_for_use?
+      elsif !role_aggregate.ready_for_use
         errors.add(:enabled, 'Role aggregate configuration is not complete')
       else
         # Must explicitly allow view_all, or have filters
@@ -29,20 +29,20 @@ class PermissionLsGroup < ActiveRecord::Base
   end
 
   def enabled_allowed?
-    return role_aggregate.present? && role_aggregate.ready_for_use? && (
+    return role_aggregate.present? && role_aggregate.ready_for_use && (
       view_all == true || permission_ls_group_filters.select{|plgf| plgf.enabled? }.count > 0
     )
   end
 
-  def ready_for_use?
+  def ready_for_use
     enabled && enabled_allowed?
   end
 
   rails_admin do
-    visible false
+    visible true
 
     edit do
-      field :ready_for_use?, :boolean do
+      field :ready_for_use, :boolean do
        read_only true
       end
 
@@ -70,6 +70,6 @@ class PermissionLsGroup < ActiveRecord::Base
   end
 
   def disabled?
-    !ready_for_use?
+    !ready_for_use
   end
 end
