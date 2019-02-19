@@ -6,6 +6,8 @@
                 <dl class="dl-horizontal" style="padding:10px;">
                 <dt><label for="username">Username</label></dt>
                 <dd><%= @user.username%></dd>
+                <dt><%= f.label :full_name %></dt>
+                <dd><%= f.text_field :full_name %></dd>
                 <dt><%= f.label :password %></dt>
                 <dd><%= f.password_field :password,
                     :disabled=>@user.is_ldap?,
@@ -32,7 +34,3 @@
     </div>
 
 </div>
-
-
-
-
