@@ -156,7 +156,6 @@ module LsReportsHelper
       @hide_agg = opts[:hide_agg] || false
       @hide_pk = opts[:hide_pk] || false
       @params = opts[:params].is_a?(Hash) ? opts[:params] : {}
-      its_important_to_check_ids
       add_permission_group_filters
       add_all_param_filters
       do_titles
@@ -171,12 +170,6 @@ module LsReportsHelper
     def hide_pk; @hide_pk; end
     def series_name; @series_name; end
     def unfiltered_series_name; @unfiltered_series_name; end
-
-    def its_important_to_check_ids
-      raise "Identical Survey Object ids" if lime_survey.object_id == lime_survey_unfiltered.object_id
-      raise "Identical Data Object ids" if lime_survey.lime_data.object_id == lime_survey_unfiltered.lime_data.object_id
-      raise "Identical Stats Object ids" if lime_survey.lime_stats.object_id == lime_survey_unfiltered.lime_stats.object_id
-    end
 
     ##
     # Set nothing found
@@ -223,10 +216,7 @@ module LsReportsHelper
       end
       raise ActiveRecord::RecordNotFound unless result
 
-      # !!!!!!!!!!! Important !!!!!!!!!!!!
-      # Must marshal/de-marshal in order to prevent return of identical objects
-      result = Marshal.load(Marshal.dump(result))
-      return result
+      result
     end
 
     ##
