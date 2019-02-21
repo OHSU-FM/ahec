@@ -3,7 +3,7 @@ source "https://rubygems.org"
 ##############################
 # Main
 ##############################
-gem "bundler"
+gem 'bundler', '~> 1.17', '>= 1.17.3'
 gem 'rails', '~> 5.2'
 gem "rdoc"
 gem 'whenever', require: false
