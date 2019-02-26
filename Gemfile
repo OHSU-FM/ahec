@@ -92,7 +92,6 @@ group :test, :development do
   gem "rspec-rails"
   gem "capybara"
   gem "rails-perftest"
-  gem "factory_bot_rails"
   gem "faker"
   gem 'rails-controller-testing'
   gem "byebug"
