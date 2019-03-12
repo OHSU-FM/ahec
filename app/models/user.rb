@@ -9,6 +9,8 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   serialize :roles, Array
 
+  before_validation :set_roles, unless: :roles?
+
   belongs_to :lime_user, foreign_key: :username, primary_key: :users_name
   belongs_to :permission_group, inverse_of: :users
   belongs_to :cohort
@@ -338,5 +340,11 @@ class User < ActiveRecord::Base
     return @cohorts if defined? @cohorts
     @cohorts ||= admin_or_higher? ? Cohort.all : Cohort.where(owner: self)
     return @cohorts
+  end
+
+  protected
+
+  def set_roles
+    self.roles = [:can_dashboard, :can_chart, :can_stats, :can_reports]
   end
 end
