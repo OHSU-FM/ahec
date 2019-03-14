@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
   helper_method :auto_path
   before_action :store_current_location, unless: :devise_controller?
   before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :deny_access, if: :devise_controller?, :only => [:new, :create]
 
   rescue_from DeviseLdapAuthenticatable::LdapException do |exception|
     flash[:alert] = 'Unable to reach authentication server'
@@ -42,6 +43,11 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def deny_access
+    return unless params[:controller] == "devise/invitations"
+    raise CanCan::AccessDenied unless current_user&.admin?
+  end
 
   def store_current_location
     store_location_for(:user, request.url)
