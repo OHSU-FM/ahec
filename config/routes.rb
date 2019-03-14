@@ -28,8 +28,6 @@ Rails.application.routes.draw do
 
   resources :user, controller: :users, param: :username, only: [:show, :update]
 
-  get "ls_files/:sid/:row_id/:qid/:name", to: "ls_files#show", constraints: { name: /[^\/]+/ }, as: :lime_file
-
   root to: "dashboard#index"
 
   # Error routing
