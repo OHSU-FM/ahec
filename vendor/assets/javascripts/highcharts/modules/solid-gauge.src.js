@@ -1,49 +1,126 @@
 /**
- * @license  Highcharts JS v5.0.6 (2016-12-07)
+ * @license  Highcharts JS v7.1.1 (2019-04-09)
+ *
  * Solid angular gauge module
  *
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
-(function(factory) {
+'use strict';
+(function (factory) {
     if (typeof module === 'object' && module.exports) {
+        factory['default'] = factory;
         module.exports = factory;
+    } else if (typeof define === 'function' && define.amd) {
+        define('highcharts/modules/solid-gauge', ['highcharts', 'highcharts/highcharts-more'], function (Highcharts) {
+            factory(Highcharts);
+            factory.Highcharts = Highcharts;
+            return factory;
+        });
     } else {
-        factory(Highcharts);
+        factory(typeof Highcharts !== 'undefined' ? Highcharts : undefined);
     }
-}(function(Highcharts) {
-    (function(H) {
-        /**
+}(function (Highcharts) {
+    var _modules = Highcharts ? Highcharts._modules : {};
+    function _registerModule(obj, path, args, fn) {
+        if (!obj.hasOwnProperty(path)) {
+            obj[path] = fn.apply(null, args);
+        }
+    }
+    _registerModule(_modules, 'modules/solid-gauge.src.js', [_modules['parts/Globals.js']], function (H) {
+        /* *
          * Solid angular gauge module
          *
-         * (c) 2010-2016 Torstein Honsi
+         * (c) 2010-2019 Torstein Honsi
          *
          * License: www.highcharts.com/license
          */
 
-        'use strict';
+        /**
+         * Additional options, depending on the actual symbol drawn.
+         *
+         * @interface Highcharts.SymbolOptionsObject
+         *//**
+         * Whether to draw rounded edges.
+         * @name Highcharts.SymbolOptionsObject#rounded
+         * @type {boolean|undefined}
+         */
+
+
 
         var pInt = H.pInt,
             pick = H.pick,
-            each = H.each,
             isNumber = H.isNumber,
+            wrap = H.wrap,
+            Renderer = H.Renderer,
             colorAxisMethods;
+
+        /**
+         * Symbol definition of an arc with round edges.
+         *
+         * @private
+         * @function Highcharts.Renderer#symbols.arc
+         *
+         * @param {number} x
+         *        The X coordinate for the top left position.
+         *
+         * @param {number} y
+         *        The Y coordinate for the top left position.
+         *
+         * @param {number} w
+         *        The pixel width.
+         *
+         * @param {number} h
+         *        The pixel height.
+         *
+         * @param {Highcharts.SymbolOptionsObject} [options]
+         *        Additional options, depending on the actual symbol drawn.
+         *
+         * @return {Highcharts.SVGPathArray}
+         *         Path of the created arc.
+         */
+        wrap(
+            Renderer.prototype.symbols,
+            'arc',
+            function (proceed, x, y, w, h, options) {
+                var arc = proceed,
+                    path = arc(x, y, w, h, options);
+
+                if (options.rounded) {
+                    var r = options.r || w,
+                        smallR = (r - options.innerR) / 2,
+                        x1 = path[1],
+                        y1 = path[2],
+                        x2 = path[12],
+                        y2 = path[13],
+                        roundStart = ['A', smallR, smallR, 0, 1, 1, x1, y1],
+                        roundEnd = ['A', smallR, smallR, 0, 1, 1, x2, y2];
+
+                    // Insert rounded edge on end, and remove line.
+                    path.splice.apply(path, [path.length - 1, 0].concat(roundStart));
+                    // Insert rounded edge on end, and remove line.
+                    path.splice.apply(path, [11, 3].concat(roundEnd));
+                }
+
+                return path;
+            }
+        );
 
         // These methods are defined in the ColorAxis object, and copied here.
         // If we implement an AMD system we should make ColorAxis a dependency.
         colorAxisMethods = {
 
 
-            initDataClasses: function(userOptions) {
-                var axis = this,
-                    chart = this.chart,
+            initDataClasses: function (userOptions) {
+                var chart = this.chart,
                     dataClasses,
                     colorCounter = 0,
                     options = this.options;
+
                 this.dataClasses = dataClasses = [];
 
-                each(userOptions.dataClasses, function(dataClass, i) {
+                userOptions.dataClasses.forEach(function (dataClass, i) {
                     var colors;
 
                     dataClass = H.merge(dataClass);
@@ -57,25 +134,26 @@
                                 colorCounter = 0;
                             }
                         } else {
-                            dataClass.color = axis.tweenColors(H.color(options.minColor), H.color(options.maxColor), i / (userOptions.dataClasses.length - 1));
+                            dataClass.color = H.color(options.minColor).tweenTo(
+                                H.color(options.maxColor),
+                                i / (userOptions.dataClasses.length - 1)
+                            );
                         }
                     }
                 });
             },
 
-            initStops: function(userOptions) {
+            initStops: function (userOptions) {
                 this.stops = userOptions.stops || [
                     [0, this.options.minColor],
                     [1, this.options.maxColor]
                 ];
-                each(this.stops, function(stop) {
+                this.stops.forEach(function (stop) {
                     stop.color = H.color(stop[1]);
                 });
             },
-            /** 
-             * Translate from a value to a color
-             */
-            toColor: function(value, point) {
+            // Translate from a value to a color
+            toColor: function (value, point) {
                 var pos,
                     stops = this.stops,
                     from,
@@ -91,7 +169,10 @@
                         dataClass = dataClasses[i];
                         from = dataClass.from;
                         to = dataClass.to;
-                        if ((from === undefined || value >= from) && (to === undefined || value <= to)) {
+                        if (
+                            (from === undefined || value >= from) &&
+                            (to === undefined || value <= to)
+                        ) {
                             color = dataClass.color;
                             if (point) {
                                 point.dataClass = i;
@@ -118,73 +199,96 @@
                     // The position within the gradient
                     pos = 1 - (to[0] - pos) / ((to[0] - from[0]) || 1);
 
-                    color = this.tweenColors(
-                        from.color,
+                    color = from.color.tweenTo(
                         to.color,
                         pos
                     );
                 }
                 return color;
-            },
-            /*
-             * Return an intermediate color between two colors, according to pos where 0
-             * is the from color and 1 is the to color.
-             */
-            tweenColors: function(from, to, pos) {
-                // Check for has alpha, because rgba colors perform worse due to lack of
-                // support in WebKit.
-                var hasAlpha,
-                    ret;
-
-                // Unsupported color, return to-color (#3920)
-                if (!to.rgba.length || !from.rgba.length) {
-                    ret = to.input || 'none';
-
-                    // Interpolate
-                } else {
-                    from = from.rgba;
-                    to = to.rgba;
-                    hasAlpha = (to[3] !== 1 || from[3] !== 1);
-                    ret = (hasAlpha ? 'rgba(' : 'rgb(') +
-                        Math.round(to[0] + (from[0] - to[0]) * (1 - pos)) + ',' +
-                        Math.round(to[1] + (from[1] - to[1]) * (1 - pos)) + ',' +
-                        Math.round(to[2] + (from[2] - to[2]) * (1 - pos)) +
-                        (hasAlpha ? (',' + (to[3] + (from[3] - to[3]) * (1 - pos))) : '') + ')';
-                }
-                return ret;
             }
         };
 
         /**
-         * Handle animation of the color attributes directly
+         * A solid gauge is a circular gauge where the value is indicated by a filled
+         * arc, and the color of the arc may variate with the value.
+         *
+         * @sample highcharts/demo/gauge-solid/
+         *         Solid gauges
+         *
+         * @extends      plotOptions.gauge
+         * @excluding    dial, pivot, wrap
+         * @product      highcharts
+         * @optionparent plotOptions.solidgauge
          */
-        each(['fill', 'stroke'], function(prop) {
-            H.Fx.prototype[prop + 'Setter'] = function() {
-                this.elem.attr(
-                    prop,
-                    colorAxisMethods.tweenColors(
-                        H.color(this.start),
-                        H.color(this.end),
-                        this.pos
-                    ),
-                    null,
-                    true
-                );
-            };
-        });
-
-        // The solidgauge series type
-        H.seriesType('solidgauge', 'gauge', {
-            colorByPoint: true
-
-        }, {
+        var solidGaugeOptions = {
+            /**
+             * Whether the strokes of the solid gauge should be `round` or `square`.
+             *
+             * @sample {highcharts} highcharts/demo/gauge-activity/
+             *         Rounded gauge
+             *
+             * @type       {string}
+             * @default    round
+             * @since      4.2.2
+             * @product    highcharts
+             * @validvalue ["square", "round"]
+             * @apioption  plotOptions.solidgauge.linecap
+             */
 
             /**
-             * Extend the translate function to extend the Y axis with the necessary
-             * decoration (#5895).
+             * Allow the gauge to overshoot the end of the perimeter axis by this
+             * many degrees. Say if the gauge axis goes from 0 to 60, a value of
+             * 100, or 1000, will show 5 degrees beyond the end of the axis when this
+             * option is set to 5.
+             *
+             * @type      {number}
+             * @default   0
+             * @since     3.0.10
+             * @product   highcharts
+             * @apioption plotOptions.solidgauge.overshoot
              */
-            translate: function() {
+
+            /**
+             * Wether to draw rounded edges on the gauge.
+             *
+             * @sample {highcharts} highcharts/demo/gauge-activity/
+             *         Activity Gauge
+             *
+             * @type      {boolean}
+             * @default   false
+             * @since     5.0.8
+             * @product   highcharts
+             * @apioption plotOptions.solidgauge.rounded
+             */
+
+            /**
+             * The threshold or base level for the gauge.
+             *
+             * @sample {highcharts} highcharts/plotoptions/solidgauge-threshold/
+             *         Zero threshold with negative and positive values
+             *
+             * @type      {number}
+             * @since     5.0.3
+             * @product   highcharts
+             * @apioption plotOptions.solidgauge.threshold
+             */
+
+            /**
+             * Whether to give each point an individual color.
+             */
+            colorByPoint: true
+
+        };
+
+
+        // The solidgauge series type
+        H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
+            drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
+            // Extend the translate function to extend the Y axis with the necessary
+            // decoration (#5895).
+            translate: function () {
                 var axis = this.yAxis;
+
                 H.extend(axis, colorAxisMethods);
 
                 // Prepare data classes
@@ -197,10 +301,8 @@
                 H.seriesTypes.gauge.prototype.translate.call(this);
             },
 
-            /**
-             * Draw the points where each point is one needle
-             */
-            drawPoints: function() {
+            // Draw the points where each point is one needle.
+            drawPoints: function () {
                 var series = this,
                     yAxis = series.yAxis,
                     center = yAxis.center,
@@ -223,11 +325,20 @@
                 this.thresholdAngleRad = pick(thresholdAngleRad, yAxis.startAngleRad);
 
 
-                each(series.points, function(point) {
+                series.points.forEach(function (point) {
                     var graphic = point.graphic,
-                        rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true),
-                        radius = (pInt(pick(point.options.radius, options.radius, 100)) * center[2]) / 200,
-                        innerRadius = (pInt(pick(point.options.innerRadius, options.innerRadius, 60)) * center[2]) / 200,
+                        rotation = yAxis.startAngleRad +
+                            yAxis.translate(point.y, null, null, null, true),
+                        radius = (
+                            pInt(
+                                pick(point.options.radius, options.radius, 100)
+                            ) * center[2]
+                        ) / 200,
+                        innerRadius = (
+                            pInt(
+                                pick(point.options.innerRadius, options.innerRadius, 60)
+                            ) * center[2]
+                        ) / 200,
                         shapeArgs,
                         d,
                         toColor = yAxis.toColor(point.y, point),
@@ -244,11 +355,17 @@
                     }
 
                     // Handle overshoot and clipping to axis max/min
-                    rotation = Math.max(axisMinAngle - overshootVal, Math.min(axisMaxAngle + overshootVal, rotation));
+                    rotation = Math.max(
+                        axisMinAngle - overshootVal,
+                        Math.min(axisMaxAngle + overshootVal, rotation)
+                    );
 
                     // Handle the wrap option
                     if (options.wrap === false) {
-                        rotation = Math.max(axisMinAngle, Math.min(axisMaxAngle, rotation));
+                        rotation = Math.max(
+                            axisMinAngle,
+                            Math.min(axisMaxAngle, rotation)
+                        );
                     }
 
                     minAngle = Math.min(rotation, series.thresholdAngleRad);
@@ -265,45 +382,46 @@
                         innerR: innerRadius,
                         start: minAngle,
                         end: maxAngle,
-                        fill: toColor
+                        rounded: options.rounded
                     };
                     point.startR = radius; // For PieSeries.animate
 
                     if (graphic) {
                         d = shapeArgs.d;
-                        graphic.animate(shapeArgs);
+                        graphic.animate(H.extend({ fill: toColor }, shapeArgs));
                         if (d) {
                             shapeArgs.d = d; // animate alters it
                         }
                     } else {
-                        point.graphic = renderer.arc(shapeArgs)
-                            .addClass('highcharts-point')
+                        point.graphic = graphic = renderer.arc(shapeArgs)
                             .attr({
                                 fill: toColor,
                                 'sweep-flag': 0
                             })
                             .add(series.group);
 
-
-                        if (options.linecap !== 'square') {
-                            point.graphic.attr({
-                                'stroke-linecap': 'round',
-                                'stroke-linejoin': 'round'
+                        if (!series.chart.styledMode) {
+                            if (options.linecap !== 'square') {
+                                graphic.attr({
+                                    'stroke-linecap': 'round',
+                                    'stroke-linejoin': 'round'
+                                });
+                            }
+                            graphic.attr({
+                                stroke: options.borderColor || 'none',
+                                'stroke-width': options.borderWidth || 0
                             });
                         }
-                        point.graphic.attr({
-                            stroke: options.borderColor || 'none',
-                            'stroke-width': options.borderWidth || 0
-                        });
+                    }
 
+                    if (graphic) {
+                        graphic.addClass(point.getClassName(), true);
                     }
                 });
             },
 
-            /**
-             * Extend the pie slice animation by animating from start angle and up
-             */
-            animate: function(init) {
+            // Extend the pie slice animation by animating from start angle and up.
+            animate: function (init) {
 
                 if (!init) {
                     this.startAngleRad = this.thresholdAngleRad;
@@ -312,5 +430,90 @@
             }
         });
 
-    }(Highcharts));
+        /**
+         * A `solidgauge` series. If the [type](#series.solidgauge.type) option is not
+         * specified, it is inherited from [chart.type](#chart.type).
+         *
+         *
+         * @extends   series,plotOptions.solidgauge
+         * @excluding animationLimit, boostThreshold, connectEnds, connectNulls,
+         *            cropThreshold, dashStyle, dataParser, dataURL, dial,
+         *            findNearestPointBy, getExtremesFromAll, marker, negativeColor,
+         *            pointPlacement, pivot, shadow, softThreshold, stack, stacking,
+         *            states, step, threshold, turboThreshold, wrap, zoneAxis, zones
+         * @product   highcharts
+         * @apioption series.solidgauge
+         */
+
+        /**
+         * An array of data points for the series. For the `solidgauge` series
+         * type, points can be given in the following ways:
+         *
+         * 1. An array of numerical values. In this case, the numerical values will be
+         *    interpreted as `y` options. Example:
+         *    ```js
+         *    data: [0, 5, 3, 5]
+         *    ```
+         *
+         * 2. An array of objects with named values. The following snippet shows only a
+         *    few settings, see the complete options set below. If the total number of
+         *    data points exceeds the series'
+         *    [turboThreshold](#series.solidgauge.turboThreshold), this option is not
+         *    available.
+         *    ```js
+         *    data: [{
+         *        y: 5,
+         *        name: "Point2",
+         *        color: "#00FF00"
+         *    }, {
+         *        y: 7,
+         *        name: "Point1",
+         *        color: "#FF00FF"
+         *    }]
+         *    ```
+         *
+         * The typical gauge only contains a single data value.
+         *
+         * @sample {highcharts} highcharts/chart/reflow-true/
+         *         Numerical values
+         * @sample {highcharts} highcharts/series/data-array-of-objects/
+         *         Config objects
+         *
+         * @type      {Array<number|null|*>}
+         * @extends   series.gauge.data
+         * @product   highcharts
+         * @apioption series.solidgauge.data
+         */
+
+        /**
+         * The inner radius of an individual point in a solid gauge. Can be given as a
+         * number (pixels) or percentage string.
+         *
+         * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/
+         *         Individual radius and innerRadius
+         *
+         * @type      {number|string}
+         * @since     4.1.6
+         * @product   highcharts
+         * @apioption series.solidgauge.data.innerRadius
+         */
+
+        /**
+         * The outer radius of an individual point in a solid gauge. Can be
+         * given as a number (pixels) or percentage string.
+         *
+         * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/
+         *         Individual radius and innerRadius
+         *
+         * @type      {number|string}
+         * @since     4.1.6
+         * @product   highcharts
+         * @apioption series.solidgauge.data.radius
+         */
+
+    });
+    _registerModule(_modules, 'masters/modules/solid-gauge.src.js', [], function () {
+
+
+    });
 }));
