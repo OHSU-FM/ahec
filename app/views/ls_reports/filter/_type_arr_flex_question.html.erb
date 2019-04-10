@@ -3,7 +3,7 @@
         <tr>
             <% question.stats.sub_stats.first.categorical_stats.each do |cs| %>
             <th>
-                <%= cs.answer.to_s.html_safe %> <small style="color:#aaa;">(<%= cs.code %>)</small>
+                <%= cs.answer.to_s.html_safe %> <small style="color:#aaa;">(<%= cs.code.html_safe %>)</small>
             </th>
             <% end %>
         </tr>
@@ -27,4 +27,3 @@
         <% end %>
     </tbody>
 </table>
-
