@@ -39,11 +39,10 @@
 //= require ls_reports_graph.js
 //= require sync_triggers.js
 //= require dataTables/dataTables.js
-//= require dataTables/extensions/TableTools/js/dataTables.tableTools.js
+//= require dataTables/Buttons-1.5.6/js/dataTables.buttons.js
 //= require sessions.js
 //= require animations.js
 //= require form-utils.js
 //= require select2
-//= require simplemde.min
 //= require nested_form_fields
 //= require cable
