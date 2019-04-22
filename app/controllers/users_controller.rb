@@ -2,13 +2,13 @@ class UsersController < ApplicationController
   layout 'full_width_margins'
 
   def show
-    @user = User.find_by(username: params[:username].to_s)
+    @user = User.find_by(username: params[:username])
     authorize! :read, @user
   end
 
   def update
     # allow user to update password (unless ldap)
-    @user = User.find_by(username: params[:username].to_s)
+    @user = User.find_by(username: params[:username])
     authorize! :update, @user
     respond_to do |format|
       if @user.update(user_update_params)
