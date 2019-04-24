@@ -1,14 +1,14 @@
 class UsersController < ApplicationController
   layout 'full_width_margins'
 
+  before_action :set_user
+
   def show
-    @user = User.find_by(username: params[:username])
     authorize! :read, @user
   end
 
   def update
     # allow user to update password (unless ldap)
-    @user = User.find_by(username: params[:username])
     authorize! :update, @user
     respond_to do |format|
       if @user.update(user_update_params)
@@ -24,6 +24,10 @@ class UsersController < ApplicationController
   end
 
   private
+
+  def set_user
+    @user = User.where(username: params[:username]).first
+  end
 
   def user_update_params
     params.require(:user).permit(:password, :password_confirmation, :full_name)
