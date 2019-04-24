@@ -12,8 +12,9 @@ class UsersController < ApplicationController
     authorize! :update, @user
     respond_to do |format|
       if @user.update(user_update_params)
+        bypass_sign_in @user
         flash[:notice] = 'Password Updated'
-        format.html{ render action: :show }
+        format.html{ redirect_to auto_path }
         format.json{ render json: {}, status: :ok }
       else
         flash.now[:error] = @user.errors.full_messages
@@ -30,6 +31,6 @@ class UsersController < ApplicationController
   end
 
   def user_update_params
-    params.require(:user).permit(:password, :password_confirmation, :full_name)
+    params.require(:user).permit(:password, :password_confirmation)
   end
 end
