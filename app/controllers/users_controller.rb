@@ -27,7 +27,7 @@ class UsersController < ApplicationController
   private
 
   def set_user
-    @user = User.where(username: params[:username]).first
+    @user = User.where("username = ?", params[:username]).first
   end
 
   def user_update_params
