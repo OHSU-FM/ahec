@@ -67,8 +67,8 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :sendmail
 
   # The mailer needs to know the hostname
-  config.action_mailer.default_url_options = { :host => 'fmresearch.ohsu.edu:443/private/ahec' }
-  config.action_mailer.asset_host = 'https://fmresearch.ohsu.edu'
+  config.action_mailer.default_url_options = { :host => 'https://alredi.org' }
+  config.action_mailer.asset_host = 'https://alredi.org'
 
 
   config.action_mailer.sendmail_settings = {
