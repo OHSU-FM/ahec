@@ -586,7 +586,7 @@ module LimeExt::ResponseLoaders
       end
 
       def get_error_cols sub_question, scale_id
-        [status_questions.find{|sq| sq.title == dual_scale_title(sub_question, scale_id) }.my_column_name]
+        [status_questions.find{|sq| sq.title == dual_scale_title(sub_question, scale_id) }&.my_column_name]
       end
 
       def dual_scale_title sub_question, scale_id

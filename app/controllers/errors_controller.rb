@@ -6,7 +6,7 @@ class ErrorsController < ApplicationController
       format.html { render status: 404 }
     end
   rescue ActionController::UnknownFormat
-    render status: 404, body: "not found"
+    redirect_to '/'
   end
 
   def unprocessable

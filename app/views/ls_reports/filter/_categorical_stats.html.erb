@@ -8,7 +8,7 @@
         <thead>
             <tr>
                 <th colspan="2"><h5><%= title if defined? title %></h5></th>
-                <th colspan="3"><%= @fm.filters_equal ? 'All' : 'This' %> <%= @filtered_label %></th>
+                <th colspan="3"><%= @fm.filters_equal ? 'All' : @pk %></th>
                 <th colspan="3">All <%= @unfiltered_label %></th>
             </tr>
             <tr>

@@ -62,6 +62,9 @@ Array::min=->
 
     return {
         chart: {
+            backgroundColor: "#e8eff9",
+            plotBackgroundColor: "#e8eff9",
+            plotBackgroundImage: null,
             type: chart_type,
             renderTo: graph.target,
             polar: polar,  # for spider chart,
@@ -73,7 +76,6 @@ Array::min=->
                 viewDistance: 25
             },
             #backgroundColor:'rgba(255, 255, 255, 0.4)'
-            backgroundColor: null,
             height: 380,
             width: 490
         },
@@ -147,10 +149,7 @@ Array::min=->
             },
             labels: {
                 formatter: ->
-                    if (this.value.length > 20)
-                        return this.value.substr(0,20) + "...";
-                    else
-                        return this.value;
+                  return this.value;
 
 
                 style: {
@@ -178,7 +177,7 @@ Array::min=->
 
         series: [{
 
-                     name: 'Class Mean ' + graph.unfiltered_series_name,
+                     name: '' + graph.unfiltered_series_name,
                      color: '#4497e3',
                      #pointPlacement: var_pointPlacement,
                      data: full_data  # q68
@@ -232,7 +231,7 @@ class LsGraphBase
         if unfiltered_series_name
             @unfiltered_series_name =  unfiltered_series_name  # unfiltered data series name
         else
-            @unfiltered_series_name = '(All)'
+            @unfiltered_series_name = 'All Regions'
 
         @title = if title? then title else ''
 
@@ -310,7 +309,6 @@ class LsGraphCategories extends LsGraphBase
             else
                 ca.chart.poloar = false
                 ca.yAxis.pointPlacement = 'off'
-
 
         return ca
 
@@ -432,20 +430,22 @@ window.LsReport = {}
 window.LsReport.Graph = {}
 window.LsReport.Graph.load = (target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title) ->
     chart = undefined
+    console.log qstat
+    console.log qstat.qtype
     return unless qstat?
     switch qstat.qtype
-        when "arr_flex"
+        when "arr_flex",'dual_arry'
             # one graph for each sub question
             chart = new LsGraphArrFlex(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
         when 'arr_flex_child'
             chart = new LsGraphArrFlexChild(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
-        when 'mult_numeric'
+        when 'mult_numeric', 'list_comment'
             chart = new LsGraphDescriptivesMultNumeric(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
         when 'numeric'
             # Only graph if the data is there
             if !$.isEmptyObject(qstat.descriptive_stats)
                 chart = new LsGraphDescriptivesNumeric(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
-        when 'mult', 'list_radio', 'yes_no', 'gender', 'dual_arry'
+        when 'mult', 'yes_no', 'gender','list_drop', 'list_radio'
             chart = new LsGraphCategories(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
 
         else

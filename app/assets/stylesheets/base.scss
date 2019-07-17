@@ -11,14 +11,14 @@
         font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         line-height: 1.1em;
     }
-    
-    // 
+
+    //
     form{
         overflow-wrap: break-word;
     }
 
     body{padding: 50px 0 0 0;}
-    
+
     .unselectable{
       -webkit-touch-callout: none;
       -webkit-user-select: none;
@@ -28,7 +28,7 @@
       user-select: none;
     }
 
-    
+
     html.jsEnabled{
         /* Special styles only for when js is enabled */
         .hide_if_jsEnabled{display:none;}
@@ -43,7 +43,7 @@
         z-index: 100;
         border-top: 0;
     }
-    
+
     @media screen {
         /* remove text decoration from links */
         /* a:link {text-decoration:none;} */
@@ -60,8 +60,8 @@
             color: #FFF !important;
         }
     }
-   
-    /* Primarily used for logout button in header*/ 
+
+    /* Primarily used for logout button in header*/
     .label-important{background-color: #b94a48;}
 
     /* Spacing for flash notices*/
@@ -80,10 +80,10 @@
     body.widget{
         header{display:none;}
     }
-   
+
     /* Toggle visibility of spinner image, and show content when removed */
     .spin-toggle-image{
-        display:none;    
+        display:none;
     }
     .spin-toggle-content{
         visibility:visible;
@@ -103,7 +103,7 @@
 
     body{
         .hide-unless-modal{
-            display:none;    
+            display:none;
         }
         .modal{
             .hide-unless-modal{
@@ -117,4 +117,8 @@
         overflow: hidden;
         text-overflow: ellipsis;
         o-text-overflow: ellipsis;
+    }
+
+    .box{
+      padding: 35px;
     }
