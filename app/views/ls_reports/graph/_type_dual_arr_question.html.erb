@@ -1,22 +1,26 @@
-<% pquestion.stats.sub_stats.each do |stats| %>
-        <h4><%= stats.question.question.html_safe %> </h4>
-    <% title =  strip_tags(stats.response_set.title) %>
-    <% pquestion_u = @lime_survey_unfiltered.find_question :qid, pquestion.qid %>
-    <% stats_u = pquestion_u.stats.sub_stats.find{|sub_stat|sub_stat.qid == stats.qid && sub_stat.response_set.scale_id == stats.response_set.scale_id}%>
-    <%= render :partial=>'ls_reports/graph/categorical_stats', :locals=>{:stats_u=>stats_u, :stats=>stats, :title=>title}%>
-<% end %>
+
 <div id="qid<%= pquestion.qid %>" class="parent-question panel panel-default">
     <div class="panel-body chart-visualization chart-visualization-<%= pquestion.qid %>">
         <% answers = pquestion.lime_answers %>
-        <% pquestion.stats.sub_stats.each do |stats| %>
-        <% stop %>
-            <ul id="qid<%= stats.question.qid %>" class="sub-question list-unstyled">
+        <% pquestion.stats.sub_stats.each_with_index do |stats, i| %>
+          <div id="qid<%= pquestion.qid %>" class="parent-question panel panel-default">
+            <div class="panel-body chart-visualization chart-visualization-<%= pquestion.qid %>">
+              <% answers = pquestion.lime_answers %>
+              <% qid = "#{stats.question.qid}#{i % 2}" %>
+              <ul id="qid<%= qid %>" class="sub-question list-unstyled">
                 <li><h4><%= strip_tags(stats.question.question) %></h4></li>
                 <%= render :partial=>'ls_reports/graph/graph_controls',:locals=>{:question=>stats.question, :answers=>answers, :stats=>stats} %>
-                <%= render :partial=>'ls_reports/graph/graph', :locals=>{:qid=>stats.question.qid.to_s} %>
-                <%= render :partial=>'ls_reports/graph/answers_table', :locals=>{:question=>stats.question, :answers=>answers, :stats=>stats}%>
-            </ul>
-            <hr/>
+                <%= render :partial=>'ls_reports/graph/graph', :locals=>{:qid=>qid} %>
+                <% if @fm.series_name.empty? %>
+                  <%= render :partial=>'ls_reports/graph/answers_table', :locals=>{:question=>stats.question, :answers=>answers, :stats=>stats}%>
+                <% else %>
+                  <% pquestion_u = @lime_survey_unfiltered.find_question :qid, stats.question.qid %>
+                  <% stats_u = pquestion.stats.sub_stats.find{|sub_stat|sub_stat.qid == stats.qid && sub_stat.response_set.scale_id == stats.response_set.scale_id} %>
+                  <%= render :partial=>'ls_reports/filter/categorical_stats', :locals=>{:stats_u=>stats_u, :stats=> stats}%>
+                <% end %>
+              </ul>
+            </div>
+          </div>
         <% end %>
     </div>
 </div>

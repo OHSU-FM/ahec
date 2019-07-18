@@ -178,7 +178,7 @@ Array::min=->
         series: [{
 
                      name: '' + graph.unfiltered_series_name,
-                     color: '#4497e3',
+                     color: '#FF9F1C',
                      #pointPlacement: var_pointPlacement,
                      data: full_data  # q68
                      legend: {
@@ -196,7 +196,7 @@ Array::min=->
                      visible: graph.filtered_series_name,
                      showInLegend: graph.filtered_series_name,
                      pointPlacement: var_pointPlacement,
-                     color: 'lime',
+                     color: '#2EC5B6',
                      data: data,
                      legend: {
                             itemStyle: {
@@ -291,8 +291,8 @@ class LsGraphCategories extends LsGraphBase
             ca.series[0].type = @chart_type #'pie'
             ca.series[0].data = @full_data()
             ca.series[1].data = @data()
-            ca.series[0].color = '#4497e3'
-            ca.series[1].color = 'lime'
+            ca.series[0].color = '#FF9F1C'
+            ca.series[1].color = '#2EC5B6'
             ca.series[1].name  = @filtered_series_name
             if @chart_type == 'spider'
                 ca.chart.type = 'line'
@@ -413,7 +413,7 @@ class LsGraphArrFlex
             cur_full_qstat = full_qstat.sub_stats[idy]
             cur_qstat      = qstat.sub_stats[idy]
             # Assume we can find the target
-            cur_target = $('#chart-visualization-'+ cur_qstat.qid)
+            cur_target = $('#chart-visualization-'+ cur_qstat.qid + idy % 2)
             chart = new LsGraphArrFlexChild(cur_target, graph_type, cur_qstat, cur_full_qstat, series_name, unfiltered_series_name, filters_equal, title)
             charts.push chart
 
@@ -434,7 +434,7 @@ window.LsReport.Graph.load = (target, graph_type, qstat, full_qstat, series_name
     console.log qstat.qtype
     return unless qstat?
     switch qstat.qtype
-        when "arr_flex",'dual_arry'
+        when "arr_flex",'dual_arr'
             # one graph for each sub question
             chart = new LsGraphArrFlex(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
         when 'arr_flex_child'
