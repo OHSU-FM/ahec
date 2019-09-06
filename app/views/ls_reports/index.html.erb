@@ -4,7 +4,7 @@
   <div class="row main">
   </div>
   <table class="table table-hover">
-    <thead>
+    <thead class="reports_head">
       <tr>
         <th>Survey Title</th>
         <th>
@@ -14,12 +14,6 @@
             Access
           </span>
 
-        </th>
-        <th>
-          <span data-toggle="tooltip"
-            data-container="body"
-            title="The last time that the dataset was updated">
-            Updated</span>
         </th>
       </tr>
     </thead>
@@ -50,7 +44,6 @@
       <td><i class="fa fa-<%= full_acc ? 'unlock' : 'filter' %>" style="color:<%= full_acc ? 'green' : 'maroon'%>;"
           data-toggle="tooltip" title="<%= full_acc ? "All data is visible" : "Only permitted records are visible"%>"
           ></i></td>
-      <td><%= ra.lime_survey.last_updated.to_s.to_date %></td>
     </tr>
   <% end %>
   <% end %>

@@ -21,8 +21,11 @@ module LimeExt::LimeStat
             :title,
             :q_text,
             :sub_stats,
-            :question, 
-            :response_set
+            :question,
+            :response_set,
+            :headerA,
+            :headerB
+
 
 
     def initialize response_set, opts = {}
@@ -105,7 +108,7 @@ module LimeExt::LimeStat
 
   class DescriptiveStatistics
         attr_reader :confidence_level, :mean, :median, :standard_deviation,
-                        :sum, :range, :n, :standard_deviation, :standard_error, :alpha, :crit_p, 
+                        :sum, :range, :n, :standard_deviation, :standard_error, :alpha, :crit_p,
                                     :df, :crit_v, :margin_of_error, :confidence_interval
 
 
@@ -280,6 +283,8 @@ module LimeExt::LimeStat
         sub_stat.qtype = "dual_arr_child"
         qstat.sub_stats.push sub_stat
       end
+      qstat.headerA = response_set.question.qattrs[:dualscale_headerA]
+      qstat.headerB = response_set.question.qattrs[:dualscale_headerB]
       return qstat
     end
 
@@ -344,6 +349,7 @@ module LimeExt::LimeStat
           end
           data.push codes
         end
+      stop
       else
         error_labels = rs.error_labels
         data_labels = rs.data_labels

@@ -148,8 +148,9 @@ Array::min=->
                 }
             },
             labels: {
+                rotation: -45,
                 formatter: ->
-                  return this.value;
+                  return this.value || 'Missing';
 
 
                 style: {
@@ -267,7 +268,7 @@ class LsGraphCategories extends LsGraphBase
     constructor: ->
         super
         @yTitleText = '% Responses'
-        @xTitleText = 'Answer Options'
+        @xTitleText = ''
 
     data: ->
         qstat = @qstat
@@ -317,8 +318,8 @@ class LsGraphCategories extends LsGraphBase
         return (Number(cat.percent.toFixed(2)) for cat in qstat.categorical_stats)
 
     category_labels: ->
-        qstat = @qstat
-        return (cat.answer for cat in qstat.categorical_stats)
+        qstat = @full_qstat
+        return (cat.answer || 'Missing' for cat in qstat.categorical_stats)
 
     category_data: ->
         qstat = @qstat
@@ -338,38 +339,46 @@ class LsGraphDescriptivesMultNumeric extends LsGraphBase
         #result = (Number(sub.descriptive_stats.mean.toFixed(2)) for sub in qstat.sub_stats)
         #return result
         result = []
-        for sub in qstat.sub_stats
-            rounded_float = sub.descriptive_stats.mean
-            if !rounded_float
-                rounded_float = 0
-
-            if rounded_float < 70.00
-                result.push {y: rounded_float, color:'#FFA500'}
-            else
-                result.push rounded_float
+        # for sub in qstat.sub_stats
+        #     rounded_float = sub.descriptive_stats.mean
+        #     if !rounded_float
+        #         rounded_float = 0
+        #
+        #     if rounded_float < 70.00
+        #         result.push {y: rounded_float, color:'#FFA500'}
+        #     else
+        #         result.push rounded_float
+        result = (Number(cat.percent.toFixed(2)) for cat in qstat.categorical_stats when !cat.is_err)
         return result
 
     full_data: ->
         qstat = @full_qstat
         #result = (Number(sub.descriptive_stats.mean.toFixed(2)) for sub in qstat.sub_stats)
         #return result
-        result = []
-        for sub in qstat.sub_stats
-            rounded_float = sub.descriptive_stats.mean
-            if !rounded_float?
-                rounded_float = 0
-            else
-                rounded_float = Number(rounded_float.toFixed(2))
-
-            if rounded_float < 70.00
-                result.push {y: rounded_float, borderColor:'#FFA500'}
-            else
-                result.push rounded_float
+        # result = []
+        # for sub in qstat.sub_stats
+        #     rounded_float = sub.descriptive_stats.mean
+        #     if !rounded_float?
+        #         rounded_float = 0
+        #     else
+        #         rounded_float = Number(rounded_float.toFixed(2))
+        #
+        #     if rounded_float < 70.00
+        #         result.push {y: rounded_float, borderColor:'#FFA500'}
+        #     else
+        #         result.push rounded_float
+        # return result
+        result = (Number(cat.percent.toFixed(2)) for cat in qstat.categorical_stats when !cat.is_err)
         return result
 
     category_labels: ->
+        qstat = @full_qstat
+        return (cat.answer || 'Missing' for cat in qstat.categorical_stats when !cat.is_err)
+
+    category_data: ->
         qstat = @qstat
-        return (sub_stat.q_text for sub_stat in qstat.sub_stats)
+        return ([cat.answer, cat.percent] for cat in qstat.categorical_stats when !cat.is_err)
+
 
 class LsGraphDescriptivesNumeric extends LsGraphBase
 
@@ -395,9 +404,9 @@ class LsGraphDescriptivesNumeric extends LsGraphBase
         return result
 
     category_labels: ->
-        qstat = @qstat
+        qstat = @full_qstat
         result = []
-        result.push qstat.q_text
+        result.push qstat.q_text || "Missing"
         return result
 
 class LsGraphArrFlex
@@ -413,7 +422,10 @@ class LsGraphArrFlex
             cur_full_qstat = full_qstat.sub_stats[idy]
             cur_qstat      = qstat.sub_stats[idy]
             # Assume we can find the target
-            cur_target = $('#chart-visualization-'+ cur_qstat.qid + idy % 2)
+            if (this.qtype == "dual_arr_child")
+              cur_target = $('#chart-visualization-'+ cur_qstat.qid + idy % 2)
+            else
+              cur_target = $('#chart-visualization-'+ cur_qstat.qid)
             chart = new LsGraphArrFlexChild(cur_target, graph_type, cur_qstat, cur_full_qstat, series_name, unfiltered_series_name, filters_equal, title)
             charts.push chart
 
@@ -439,7 +451,7 @@ window.LsReport.Graph.load = (target, graph_type, qstat, full_qstat, series_name
             chart = new LsGraphArrFlex(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
         when 'arr_flex_child'
             chart = new LsGraphArrFlexChild(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
-        when 'mult_numeric', 'list_comment'
+        when 'mult_numeric', 'list_comment', 'mult'
             chart = new LsGraphDescriptivesMultNumeric(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
         when 'numeric'
             # Only graph if the data is there

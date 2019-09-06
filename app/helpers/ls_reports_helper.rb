@@ -205,6 +205,8 @@ module LsReportsHelper
     # Load LimeSurvey and associations
     def get_lime_survey sid
       cache_key = "filter_manager/survey/sid=#{sid}/updated_at=#{RoleAggregate.where(lime_survey_sid: sid).pluck(:updated_at).first.to_i}"
+      Rails.logger.info "cache_key"
+      Rails.logger.info cache_key
       result = Rails.cache.fetch(cache_key, race_condition_ttl: 10) do
         # Load resource and pre-load associations
         LimeSurvey.includes(:role_aggregate,
@@ -249,7 +251,8 @@ module LsReportsHelper
     end
 
     def filters_equal
-      lime_survey.lime_data.filters == lime_survey_unfiltered.lime_data.filters
+      series_name.empty?
+      # lime_survey.lime_data.filters == lime_survey_unfiltered.lime_data.filters
     end
 
     #############################
