@@ -249,7 +249,7 @@ module LsReportsHelper
     end
 
     def filters_equal
-      lime_survey.lime_data.filters == lime_survey_unfiltered.lime_data.filters
+      series_name.empty?
     end
 
     #############################
