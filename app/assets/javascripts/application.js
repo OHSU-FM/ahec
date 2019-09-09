@@ -24,8 +24,8 @@
 //= require modern-business/modern-business.js
 //= require cocoon
 //= require highcharts/highcharts.js
-//= require highcharts/highcharts-more.js
 //= require highcharts/highcharts-3d.js
+//= require highcharts/highcharts-more.js
 //= require startup.js
 //= require scrollspy.js
 //= require typeahead.bundle.js

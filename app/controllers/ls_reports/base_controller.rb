@@ -80,8 +80,6 @@ class LsReports::BaseController < ApplicationController
 
     gon.series_name = @fm.series_name
     gon.unfiltered_series_name = @fm.unfiltered_series_name
-
-
   end
 
   def will_view_raw_data?

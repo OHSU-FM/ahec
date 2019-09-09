@@ -12,6 +12,10 @@ $contrast-color: red;
     border-bottom: 3px solid $contrast-color;
 }
 
+*[id^='chart-visualization']{
+  overflow: visible !important;
+}
+
 body.theme-waterfront-fog{
     #dashboard-controls{background-color: rgba(250, 250, 250, 0.9);}
     // Background image

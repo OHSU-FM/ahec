@@ -3,7 +3,6 @@
         <thead>
             <tr>
                 <th>Answer</th>
-                <th>Code</th>
                 <th># Responses</th>
                 <th># <%= @role_aggregate.get_pk_label.pluralize %></th>
                 <th>Responses (%)</th>
@@ -12,13 +11,20 @@
         <tbody>
         <% stats.categorical_stats.each do |cat_stat| %>
             <tr>
-               <td><%= cat_stat.answer.to_s.html_safe %>  </td>
-               <td class="centered-data"><%= cat_stat.code %>  </td>
+               <td><%= cat_stat.answer ? cat_stat.answer.to_s.html_safe : 'Missing' %></td>
                <th class="centered-data"><%= cat_stat.frequency %>  </th>
                <td class="centered-data"><%= cat_stat.pk_frequency %>  </td>
                <th class="centered-data"><%= cat_stat.percent.round(2) %>  </th>
             </tr>
         <% end %>
+        <tr class="totals-row">
+            <td><b>Total Response:</b></td>
+            <td class="centered-data"><%= stats.response_count %></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
         </tbody>
     </table>
 </div>

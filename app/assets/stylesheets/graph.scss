@@ -32,9 +32,9 @@ body#role_aggregates{
     .centered-data {
           text-align: center;
     }
-    .question { color: #0000FF; 
-                font: 18px arial, 
-                sans-serif; font-weight: bold; 
+    .question { color: #0000FF;
+                font: 18px arial,
+                sans-serif; font-weight: bold;
     }
     .nav { font-weight: normal; }
 
@@ -51,11 +51,11 @@ body#role_aggregates{
         /* scroll-spy-nav position before getting affixed to top of page */
         /* How to display when visible */
         & li.active li{display:block;}
-        
+
         /* Hide sub li when parent not active */
         /* Bold font in parent li when selected */
         & > ul > li.active > a{font-weight:700;}
-    
+
         & > ul > li{
             /* level 1*/
             & > a{
@@ -81,7 +81,7 @@ body#role_aggregates{
                     }
                     &.active > a{
                         padding-left:52px;
-                        border-left: 2px solid #c6bdbc; 
+                        border-left: 2px solid #c6bdbc;
                     }
                 }
             }
@@ -112,3 +112,10 @@ body#role_aggregates{
 
 }
 
+xAxis: {
+    labels: {
+        style: {
+            textOverflow: 'none'
+        }
+    }
+}
