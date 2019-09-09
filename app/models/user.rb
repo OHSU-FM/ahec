@@ -295,17 +295,7 @@ class User < ActiveRecord::Base
   end
 
   def lime_surveys
-    if has_dirty_ls_list? or admin_or_higher? or Redis.current.smembers("user:#{id}:ls_p_list").empty?
-      ls_list = role_aggregates.map{|ra| ra.lime_survey }
-      unless ls_list.empty?
-        Redis.current.sadd("user:#{id}:ls_p_list", ls_list.map{|ls| ls.sid })
-      end
-      self.clean_ls_list
-      ls_list
-    else
-      sids = Redis.current.smembers("user:#{id}:ls_p_list")
-      LimeSurvey.where(sid: sids)
-    end
+    role_aggregates.map{|ra| ra.lime_survey }
   end
 
   def lime_surveys_by_most_recent n = nil
