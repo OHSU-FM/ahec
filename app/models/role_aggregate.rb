@@ -56,7 +56,7 @@ class RoleAggregate < ActiveRecord::Base
   end
 
   def ready_for_use
-    agg_question.present? && pk_question.present? && data_table_exists?
+    (agg_question.present? || pk_question.present?) && data_table_exists?
   end
 
   def delete_dash_widgets
