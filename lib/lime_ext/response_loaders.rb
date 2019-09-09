@@ -370,8 +370,6 @@ module LimeExt::ResponseLoaders
     end
 
     class ResponseSetMult < ResponseSetGenericParent
-      CODE_OTHER ||= '0' # Code used to represent "Other" was checked
-
       def has_sql; true end
 
       def data
@@ -414,7 +412,7 @@ module LimeExt::ResponseLoaders
 
       def data_labels
         return @data_labels if defined? @data_labels
-        @data_labels = {CODE_OTHER=>'Other'}
+        @data_labels = {}
         question.sub_questions.each do |squestion|
           next if squestion.my_column_name.end_with? 'other'
           @data_labels[squestion.title] = squestion.question
@@ -586,7 +584,7 @@ module LimeExt::ResponseLoaders
       end
 
       def get_error_cols sub_question, scale_id
-        [status_questions.find{|sq| sq.title == dual_scale_title(sub_question, scale_id) }.my_column_name]
+        [status_questions.find{|sq| sq.title == dual_scale_title(sub_question, scale_id) }&.my_column_name]
       end
 
       def dual_scale_title sub_question, scale_id
