@@ -179,7 +179,7 @@ Array::min=->
         series: [{
 
                      name: '' + graph.unfiltered_series_name,
-                     color: '#FF9F1C',
+                     color: '#2EC5B6',
                      #pointPlacement: var_pointPlacement,
                      data: full_data  # q68
                      legend: {
@@ -197,7 +197,7 @@ Array::min=->
                      visible: graph.filtered_series_name,
                      showInLegend: graph.filtered_series_name,
                      pointPlacement: var_pointPlacement,
-                     color: '#2EC5B6',
+                     color: '#A5CC05',
                      data: data,
                      legend: {
                             itemStyle: {
@@ -292,8 +292,8 @@ class LsGraphCategories extends LsGraphBase
             ca.series[0].type = @chart_type #'pie'
             ca.series[0].data = @full_data()
             ca.series[1].data = @data()
-            ca.series[0].color = '#FF9F1C'
-            ca.series[1].color = '#2EC5B6'
+            ca.series[0].color = '#2EC5B6'
+            ca.series[1].color = '#A5CC05'
             ca.series[1].name  = @filtered_series_name
             if @chart_type == 'spider'
                 ca.chart.type = 'line'
