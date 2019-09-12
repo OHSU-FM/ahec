@@ -1,14 +1,12 @@
 <% return unless dash.dashboard_widgets.count == 0 %>
 
-<li class="gs-w gs-w-no-resize" style="padding:0 20px;"
+<li class="gs-w gs-w-no-resize" style="padding:0 20px; text-align: center;"
         data-col="1" data-row="1"
         data-sizey="1" data-min-sizey="1" data-max-sizey="1"
-        data-sizex="2" data-min-sizex="2" data-max-sizex="2" >
+        data-sizex="4" data-min-sizex="4" data-max-sizex="4" >
     <div class="widget-resize-hook">
         <h3>Welcome to <%= Settings.site.name %></h3>
-        <p>
-            You haven't added anything to your dashboard yet.
-        </p>
+        <h3>AHEC Learner Research & Evaluation Data for Improvement</h3>
         <br/>
         <%= link_to ls_reports_path, :class=>'btn btn-success' do %>
             View Reports

@@ -5,6 +5,18 @@
 */
 @import 'base';
 
+.parent-question{
+      color:black;
+      align-items: flex-start;
+}
+.sticky-heading{
+      position: -webkit-sticky;
+      position: sticky;
+      top: 4rem;
+      z-index: 10;
+}
+
+
 .dropdown-menu > li{
     & > span{
         display: block;
@@ -49,8 +61,8 @@ body{
     #page-content{
 
         .main{
-        
-        } 
+
+        }
         .sidebar{
             #report-overview{
                 font-size: 9pt;
@@ -125,4 +137,3 @@ a.toggle-img:hover{text-decoration:underline;}
    width: 50px;
    margin: 0 auto;
 }
-

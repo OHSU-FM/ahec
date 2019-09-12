@@ -6,7 +6,7 @@
           <div id="qid<%= pquestion.qid %>"></div>
             <div  class="parent-question panel panel-default">
               <% if !pquestion.question.include? "TOKEN" %>
-                <div class="panel-heading">
+                <div class="panel-heading sticky-heading">
                   <h4><%= strip_tags(pquestion.question).html_safe %></h4>
                 </div>
               <% end %>
