@@ -118,7 +118,7 @@ Array::min=->
         },
 
         yAxis: {
-            min: 0, max: max_item, lineWidth: 0, tickInterval: max_tick,
+            min: 0, max: 100, lineWidth: 0, tickInterval: max_tick,
             pointPlacement: var_pointPlacement,
             lineWidth: 0,
             gridLineInterpolation: 'polygon',
