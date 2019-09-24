@@ -13,8 +13,8 @@ en:
         header: "Send invitation"
         submit_button: "Send an invitation"
       edit:
-        header: "Set your password"
-        submit_button: "Set my password"
+        header: "Set up your ALREDI account"
+        submit_button: "Save and login"
     mailer:
       invitation_instructions:
         subject: "Invitation to ALREDI"

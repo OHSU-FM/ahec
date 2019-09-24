@@ -1,13 +1,19 @@
-<h2><%= t 'devise.invitations.edit.header' %></h2>
+<div class="col-md-8 fade-in two">
+  <h2><%= t 'devise.invitations.edit.header' %></h2>
 
-<%= simple_form_for resource, as: resource_name, url: invitation_path(resource_name), html: { method: :put } do |f| %>
-  <%= devise_error_messages! %>
-  <%= f.hidden_field :invitation_token %>
+  <%= simple_form_for resource, as: resource_name, url: invitation_path(resource_name), html: { method: :put } do |f| %>
+    <%= devise_error_messages! %>
+    <%= f.hidden_field :invitation_token %>
 
-  <%= f.input :username %>
-  <%= f.input :full_name %>
-  <%= f.input :password, label: "Password: 8-30 characters and include: 1 uppercase, 1 lowercase, 1 digit and 1 special character" %>
-  <%= f.input :password_confirmation %>
+    <%= f.input :username %>
+    <%= f.input :full_name %>
+    <%= f.input :password, label: "Password: 8-30 characters and include: 1 uppercase, 1 lowercase, 1 digit and 1 special character" %>
+    <%= f.input :password_confirmation %>
 
-  <%= f.button :submit, t("devise.invitations.edit.submit_button") %>
-<% end %>
+    <%= f.button :submit, t("devise.invitations.edit.submit_button"), class: "btn btn-primary"  %>
+  <% end %>
+</div>
+
+<div class="col-md-3 fade-in two">
+  <%= image_tag "alredi_logo", :size=>"150 x 150" %>
+</div>
