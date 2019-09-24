@@ -17,21 +17,6 @@ Array::min=->
     data = graph.data()
     full_data = graph.full_data()
 
-    max_item = data.max()
-    if (max_item < 10 )
-            max_item = 10
-            max_tick = null
-    else if (max_item > 10 && max_item < 50)
-            max_item = 50
-            max_tick = null
-        else if (max_item > 50 && max_item <= 100)
-                max_item = 100
-                max_tick = 10
-            else
-                max_item = 100
-                max_tick = 10
-
-
     category_labels = graph.category_labels()
     chart_type = graph.chart_type
 
@@ -118,7 +103,7 @@ Array::min=->
         },
 
         yAxis: {
-            min: 0, max: 100, lineWidth: 0, tickInterval: max_tick,
+            min: 0, max: 100, lineWidth: 0, tickInterval: 10,
             pointPlacement: var_pointPlacement,
             lineWidth: 0,
             gridLineInterpolation: 'polygon',
