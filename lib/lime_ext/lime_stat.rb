@@ -24,7 +24,8 @@ module LimeExt::LimeStat
             :question,
             :response_set,
             :headerA,
-            :headerB
+            :headerB,
+            :comments
 
 
 
@@ -39,6 +40,7 @@ module LimeExt::LimeStat
       @sub_stats = []
       @categorical_stats = []
       @descriptive_stats = nil
+      @comments = nil
       @response_count = @response_set.response_count
       @qid = @question.qid
       @qtype = @question.qtype
@@ -51,6 +53,7 @@ module LimeExt::LimeStat
     def qtype; @qtype; end
     def qtype= val; @qtype = val; end
     def sub_stats; @sub_stats; end
+    def comments; @comments; end
     def descriptive_stats= val; @descriptive_stats = val; end
     def categorical_stats; @categorical_stats; end
     def categorical_stats= val; @categorical_stats = val; end
@@ -362,7 +365,17 @@ module LimeExt::LimeStat
     end
 
     def load_mult_w_comments response_set, opts={}
-      return load_mult response_set, opts
+      qstat = load_mult response_set, opts
+      related_data_values = response_set.related_data.values
+      qstat.comments = []
+      related_data_values.each_with_index do |answers, index|
+        next if index.odd?
+        answers.each_with_index do |answer, j|
+          next unless answer.present? and response_set.related_data.values[index + 1][j].present?
+          qstat.comments << [response_set.data_labels.to_a[index/2][1], related_data_values[index + 1][j]]
+        end
+      end
+      return qstat
     end
 
     def load_rank response_set, opts={}
@@ -377,6 +390,16 @@ module LimeExt::LimeStat
       # Generate Categorical stats
       qstat.categorical_stats = CategoricalStatistics.generate_stats rs.question,
         rs.qtype, rs.data, rs.data_labels, rs.error_labels
+      return qstat
+    end
+
+    def load_list_comment response_set, opts={}
+      qstat = load_list_drop response_set, opts
+      qstat.comments = response_set.related_data.values[1].map.with_index do |value, index|
+        if value.present?
+          [response_set.data_labels[response_set.related_data.values[0][index]], value]
+        end
+      end.compact
       return qstat
     end
 

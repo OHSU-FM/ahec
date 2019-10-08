@@ -1,0 +1,24 @@
+<div id="qid<%= pquestion.qid %>" class="parent-question panel panel-default">
+    <div class="panel-body chart-visualization chart-visualization-<%= pquestion.qid %>">
+        <% answers = pquestion.lime_answers %>
+        <% stats = pquestion.stats %>
+        <% pquestion_u = @lime_survey_unfiltered.find_question :qid, pquestion.qid %>
+            <ul id="qid<%= stats.question.qid %>" class="sub-question list-unstyled">
+                <%= render :partial=>'ls_reports/graph/graph_controls',:locals=>{:question=>stats.question, :answers=>answers, :stats=>stats} %>
+                <%= render :partial=>'ls_reports/graph/graph', :locals=>{:qid=>stats.question.qid.to_s} %>
+                <% if @fm.series_name.empty? %>
+                  <%= render :partial=>'ls_reports/graph/answers_table', :locals=>{:question=>stats.question, :answers=>answers, :stats=>stats}%>
+                <% else %>
+                  <%= render :partial=>'ls_reports/filter/categorical_stats', :locals=>{:stats_u=>pquestion_u.stats, :stats=> stats}%>
+                <% end %>
+            </ul>
+    </div>
+    <% unless stats.comments.empty? %>
+      <div class="panel-heading panel-title">Comments</div>
+      <ol class="sub-question">
+        <% stats.comments.each do |comment| %>
+              <li><%= comment[0] %> <%= comment[1] %></li>
+         <% end %>
+      </ol>
+    <% end %>
+</div>
