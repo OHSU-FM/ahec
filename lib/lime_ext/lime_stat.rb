@@ -365,6 +365,10 @@ module LimeExt::LimeStat
       return load_mult response_set, opts
     end
 
+    def load_rank response_set, opts={}
+      return load_mult response_set, opts
+    end
+
     ##
     #
     def load_list_drop response_set, opts={}

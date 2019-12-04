@@ -436,7 +436,7 @@ window.LsReport.Graph.load = (target, graph_type, qstat, full_qstat, series_name
             chart = new LsGraphArrFlex(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
         when 'arr_flex_child'
             chart = new LsGraphArrFlexChild(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
-        when 'mult_numeric', 'list_comment', 'mult'
+        when 'mult_numeric', 'list_comment', 'mult', 'rank'
             chart = new LsGraphDescriptivesMultNumeric(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
         when 'numeric'
             # Only graph if the data is there
