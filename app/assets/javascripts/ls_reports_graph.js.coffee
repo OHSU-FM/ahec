@@ -61,8 +61,8 @@ Array::min=->
                 viewDistance: 25
             },
             #backgroundColor:'rgba(255, 255, 255, 0.4)'
-            height: null,
-            width: null
+            height: 380,
+            width: 490
         },
 
         tooltip: {
