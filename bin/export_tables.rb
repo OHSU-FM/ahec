@@ -21,7 +21,7 @@ then_drop = false
 if ARGV.include? '--no-data'
     get_data = false
 end
-binding.pry
+
 tables = ActiveRecord::Base.connection.tables.to_a
 
 if ARGV.include? '--lime-only'

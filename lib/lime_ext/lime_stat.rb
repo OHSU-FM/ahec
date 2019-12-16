@@ -25,7 +25,10 @@ module LimeExt::LimeStat
             :response_set,
             :headerA,
             :headerB,
-            :comments
+            :comments,
+            :rank_labels,
+            :rank_frequencies,
+            :rank_percentage
 
 
 
@@ -38,6 +41,9 @@ module LimeExt::LimeStat
         fail(:role_aggregate)
       end
       @sub_stats = []
+      @rank_labels = []
+      @rank_frequencies = []
+      @rank_percentage = []
       @categorical_stats = []
       @descriptive_stats = nil
       @comments = nil
@@ -257,6 +263,100 @@ module LimeExt::LimeStat
 
   end
 
+  class RankStatistics
+
+        attr_reader :code,
+            :qtype,
+            :answer,
+            :frequency,
+            :pk_frequency,
+            :agg_frequency,
+            :percent,
+            :is_err,
+            :total,
+            :question,
+            :item_id,
+            :error_labels,
+            :data_labels,
+            :name
+
+
+    def self.generate_titled_stats question, title, qtype, data, data_labels, error_labels
+      return {
+        title: title,
+        categories: self.generate_stats(question, qtype, data, data_labels, error_labels)
+      }
+    end
+
+    # Return array of categorical_statistics
+    def self.generate_stats question, qtype, data, data_labels, error_labels, related_data
+      data ||= []
+      all_results = []
+      # Generate stats for each category
+      related_data.each do |code, data|
+        results = []
+        data_labels.each do |code, val|
+          cstat = self.new question, code, results.size, qtype, data, data_labels, error_labels
+          results.push cstat
+        end
+        all_results.push results
+      end
+      return all_results
+    end
+
+    # Return statistics for a single category
+    def initialize question, code, item_id, qtype, data, data_labels, error_labels
+      data ||= []
+      @question = question
+      @data_labels = data_labels
+      @error_labels = error_labels
+      @role_aggregate = question.lime_group.lime_survey.role_aggregate
+      @code = code
+      @item_id = item_id
+      @qtype = qtype
+      @total = data.count
+      @is_err = !data_labels.keys.include?(code)
+      @answer = data_labels[code] || error_labels[code] || code
+      # count occurrences or include? if is array
+      is_array = data.first.respond_to?('each')
+      @frequency = data.count{|val| is_array ? val.include?(code) : val == code}
+      @pk_frequency = count_unique_related(@role_aggregate.pk_fieldname, data)
+      @agg_frequency = count_unique_related(@role_aggregate.agg_fieldname, data)
+      @percent = (@frequency.to_f / @total) * 100
+      @percent = 0 if @total == 0
+    end
+
+    def code; @code; end
+    def answer; @answer; end
+    def frequency; @frequency; end
+    def pk_frequency; @pk_frequency; end
+    def percent; @percent; end
+
+    # Prevent gon/view from having access to data
+    def as_json(options=nil)
+      super({ except: ['data', 'question', 'role_aggregate'] }.merge(options || {}))
+    end
+
+    ##
+    # Return the number of unique values in another field where our field == filter
+    def count_unique_related unique_fieldname, data
+      # bail if no data
+      return 0 if data.empty?
+
+      # Get index of all values that are not equal to filter
+      idx = []
+      data.each_with_index{|val, i| idx.push(i) if val == @code }
+
+      # Bail if nothing was found
+      return 0 unless idx
+
+      # count unique values
+      values =  @question.lime_data.responses_for(unique_fieldname).values_at(*idx)
+      return values.uniq.count{|val|val != ''}
+    end
+
+  end
+
   class TextStatistics
     def initialize data
     end
@@ -379,7 +479,28 @@ module LimeExt::LimeStat
     end
 
     def load_rank response_set, opts={}
-      return load_mult response_set, opts
+      rs = response_set
+      qstat = QuestionStat.new rs
+      # Generate Categorical stats
+      qstat.categorical_stats = RankStatistics.generate_stats rs.question,
+        rs.qtype, rs.data, rs.data_labels, rs.error_labels, rs.related_data
+      rank_total = rs.related_data.length
+      qstat.rank_labels = ("Rank 1".."Rank #{rank_total}").to_a
+      rs.data_labels.values.each_with_index do |choice, index|
+        choice_data = { name: choice }
+        choice_percentage = { name: choice }
+        choice_rank_totals = []
+        choice_rank_percentage = []
+        rank_total.times do |n|
+          choice_rank_totals << qstat.categorical_stats[index][n].frequency
+          choice_rank_percentage << qstat.categorical_stats[index][n].percent.round(2)
+        end
+        choice_data[:data] = choice_rank_totals
+        choice_percentage[:data] = choice_rank_percentage
+        qstat.rank_frequencies << choice_data
+        qstat.rank_percentage << choice_percentage
+      end
+      return qstat
     end
 
     ##

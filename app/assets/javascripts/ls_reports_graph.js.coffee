@@ -12,6 +12,30 @@ Array::max=->
 Array::min=->
     Math.min.apply(null, this)
 
+DrawRankFrequency =(target, qstat) ->
+  Highcharts.chart 'rank',
+  chart: type: 'bar'
+  title: text: ''
+  xAxis: categories: qstat.rank_labels
+  yAxis:
+    min: 0
+    title: text: 'Frequency'
+  legend: reversed: true
+  plotOptions: series: stacking: 'normal'
+  series: qstat.rank_frequencies
+
+DrawRankPercentage =(target, qstat) ->
+  Highcharts.chart 'rank-2',
+  chart: type: 'bar'
+  title: text: ''
+  xAxis: categories: qstat.rank_labels
+  yAxis:
+    min: 0
+    title: text: 'Percentage'
+  legend: reversed: true
+  plotOptions: series: stacking: 'normal'
+  series: qstat.rank_percentage
+
 @chart_args = (graph) ->
 
     data = graph.data()
@@ -61,8 +85,8 @@ Array::min=->
                 viewDistance: 25
             },
             #backgroundColor:'rgba(255, 255, 255, 0.4)'
-            height: 380,
-            width: 490
+            height: null,
+            width: null
         },
 
         tooltip: {
@@ -436,8 +460,11 @@ window.LsReport.Graph.load = (target, graph_type, qstat, full_qstat, series_name
             chart = new LsGraphArrFlex(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
         when 'arr_flex_child'
             chart = new LsGraphArrFlexChild(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
-        when 'mult_numeric', 'list_comment', 'mult', 'rank'
+        when 'mult_numeric', 'list_comment', 'mult'
             chart = new LsGraphDescriptivesMultNumeric(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
+        when 'rank'
+            DrawRankFrequency(target,qstat)
+            DrawRankPercentage(target,qstat)
         when 'numeric'
             # Only graph if the data is there
             if !$.isEmptyObject(qstat.descriptive_stats)
