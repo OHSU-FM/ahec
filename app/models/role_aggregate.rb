@@ -14,7 +14,7 @@ class RoleAggregate < ActiveRecord::Base
   DEFAULT_VIEWS = ['graph', 'filter']
 
   def data_table_exists?
-    lime_data.table_exists?
+    lime_data.table_exists? if lime_survey
   end
 
   rails_admin do
