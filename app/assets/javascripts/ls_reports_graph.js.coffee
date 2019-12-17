@@ -32,8 +32,21 @@ DrawRankPercentage =(target, qstat) ->
   yAxis:
     min: 0
     title: text: 'Percentage'
-  legend: reversed: true
+    reversedStacks: false
+  legend: reversed: false
   plotOptions: series: stacking: 'normal'
+  tooltip:
+    headerFormat: ''
+    pointFormatter: ->
+      '<text x="8" data-z-index="1" style="font-size:12px;color:#333333;cursor:default;fill:#333333;" y="20">
+        <tspan style="font-size: 10px">' + @category + '</tspan>
+        <br>
+        <tspan style="fill:'+ this.color + '" x="8" dy="15">●</tspan>
+        <b>
+        <tspan dx="0"> ' + @series.name + ': </tspan>
+        <tspan style="font-weight:bold" dx="0">' + @y + '%,  N: ' + @n + '</tspan>
+        </b>
+      </text>'
   series: qstat.rank_percentage
 
 @chart_args = (graph) ->
@@ -463,7 +476,6 @@ window.LsReport.Graph.load = (target, graph_type, qstat, full_qstat, series_name
         when 'mult_numeric', 'list_comment', 'mult'
             chart = new LsGraphDescriptivesMultNumeric(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
         when 'rank'
-            DrawRankFrequency(target,qstat)
             DrawRankPercentage(target,qstat)
         when 'numeric'
             # Only graph if the data is there

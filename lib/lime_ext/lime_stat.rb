@@ -493,7 +493,9 @@ module LimeExt::LimeStat
         choice_rank_percentage = []
         rank_total.times do |n|
           choice_rank_totals << qstat.categorical_stats[index][n].frequency
-          choice_rank_percentage << qstat.categorical_stats[index][n].percent.round(2)
+          choice_rank_percentage << { y: qstat.categorical_stats[index][n].percent.round(2),
+                                      n: qstat.categorical_stats[index][n].frequency
+                                    }
         end
         choice_data[:data] = choice_rank_totals
         choice_percentage[:data] = choice_rank_percentage
