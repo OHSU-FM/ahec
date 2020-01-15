@@ -412,7 +412,7 @@ class LsGraphRankAll extends LsGraphBase
     constructor: ->
         super
         @yTitleText = 'Percentage'
-        @xTitleText = 'Ranked'
+        @xTitleText = 'Rankings'
 
 
     data: ->
@@ -469,7 +469,7 @@ class LsGraphRank extends LsGraphBase
     constructor: ->
         super
         @yTitleText = 'Percentage'
-        @xTitleText = 'Top Most Ranked'
+        @xTitleText = 'Most Important Reason'
 
 
     data: ->
@@ -585,7 +585,6 @@ window.LsReport.Graph.load = (target, graph_type, qstat, full_qstat, series_name
             chart = new LsGraphDescriptivesMultNumeric(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
         when 'rank'
             chart = new LsGraphRank(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
-            # chart = new LsGraphRankAll(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
         when 'numeric'
             # Only graph if the data is there
             if !$.isEmptyObject(qstat.descriptive_stats)
