@@ -291,14 +291,14 @@ module LimeExt::LimeStat
     end
 
     # Return array of categorical_statistics
-    def self.generate_stats question, qtype, data, data_labels, error_labels, related_data
+    def self.generate_stats question, qtype, data, data_labels, error_labels, related_data, total
       data ||= []
       all_results = []
       # Generate stats for each category
       related_data.each do |code, data|
         results = []
         data_labels.each do |code, val|
-          cstat = self.new question, code, results.size, qtype, data, data_labels, error_labels
+          cstat = self.new question, code, results.size, qtype, data, data_labels, error_labels, total
           results.push cstat
         end
         all_results.push results
@@ -307,7 +307,7 @@ module LimeExt::LimeStat
     end
 
     # Return statistics for a single category
-    def initialize question, code, item_id, qtype, data, data_labels, error_labels
+    def initialize question, code, item_id, qtype, data, data_labels, error_labels, total
       data ||= []
       @question = question
       @data_labels = data_labels
@@ -316,7 +316,7 @@ module LimeExt::LimeStat
       @code = code
       @item_id = item_id
       @qtype = qtype
-      @total = data.count
+      @total = total
       @is_err = !data_labels.keys.include?(code)
       @answer = data_labels[code] || error_labels[code] || code
       # count occurrences or include? if is array
@@ -485,7 +485,7 @@ module LimeExt::LimeStat
       qstat = QuestionStat.new rs
       # Generate Categorical stats
       qstat.categorical_stats = RankStatistics.generate_stats rs.question,
-        rs.qtype, rs.data, rs.data_labels, rs.error_labels, rs.related_data
+        rs.qtype, rs.data, rs.data_labels, rs.error_labels, rs.related_data,  rs.data.compact.count
       rank_total = rs.related_data.length
       qstat.rank_labels = ("Reason 1".."Reason #{rank_total}").to_a
       qstat.max_rankings = rs.data_labels.values.map {|value| {name: value, data: Array.new(rank_total, 0)}}
