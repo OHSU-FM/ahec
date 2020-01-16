@@ -6,7 +6,7 @@ hide_arr_flex = opts[:hide_arr_flex]
 <% cache([@role_aggregate, virtual_groups, opts]) do %>
   <%= image_tag Settings.site.logo %>
   <div id="scroll-spy-nav" class="hidden-print affix-top hidden-sm hidden-xs" role="complementary" data-spy="affix" data-offset-top="380">
-    <h3><%= @lime_survey.title %></h3>
+    <h3><%= @lime_survey.title %><%= " (#{@pk})" unless (@pk == '' || @pk == '_')  %></h3>
     <ul class="nav">
       <li><a href="#top">Top of page</a></li>
       <% virtual_groups.each do |group| %>

@@ -494,29 +494,17 @@ module LimeExt::LimeStat
         frequency_rank = categorical_stat.map {|x| x.frequency }
         percent_rank = categorical_stat.map {|x| x.percent.round(2) }
         highest_ranking = categorical_stat[frequency_rank.index(frequency_rank.max)]
-         qstat.max_rankings.map do |ranking|
-           ranking[:data][i] = highest_ranking.percent.round(2) if ranking[:name] == highest_ranking.answer
-         end
-         percent_rank.each_with_index do |ranking, j|
-           qstat.rank_percentage[j][:data] << ranking
-         end
+        qstat.max_rankings.map do |ranking|
+          ranking[:data][i] = highest_ranking.percent.round(2) if ranking[:name] == highest_ranking.answer
+        end
+        percent_rank.each_with_index do |ranking, j|
+          qstat.rank_percentage[j][:data] << ranking
+        end
+        frequency_rank.each_with_index do |ranking, j|
+          qstat.rank_percentage[j][:data] << ranking
+        end
       end
-      # rs.data_labels.values.each_with_index do |choice, index|
-      #   choice_data = { name: choice }
-      #   choice_percentage = { name: choice }
-      #   choice_rank_totals = []
-      #   choice_rank_percentage = []
-      #   rank_total.times do |n|
-      #     choice_rank_totals << qstat.categorical_stats[index][n].frequency
-      #     choice_rank_percentage << { y: qstat.categorical_stats[index][n].percent.round(2),
-      #                                 n: qstat.categorical_stats[index][n].frequency
-      #                               }
-      #   end
-      #   choice_data[:data] = choice_rank_totals
-      #   choice_percentage[:data] = choice_rank_percentage
-      #   qstat.rank_frequencies << choice_data
-      #   qstat.rank_percentage << choice_percentage
-      # end
+      qstat.max_rankings.map {|x| x[:name] = x[:name] + '*' if x[:data].sum == 0}
       return qstat
     end
 
