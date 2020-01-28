@@ -99,6 +99,7 @@ group :test, :development do
   gem "stackprof"
   gem "ruby-prof"
   gem "pry"
+  gem 'pry-nav'
 end
 
 group :production do
