@@ -77,6 +77,7 @@ DrawRankPercentage =(target, qstat) ->
             full_data = ''
 
         else
+            dataLabelsEnabled = false
             var_pointPlacement = 'off'
             yTitleText = graph.yTitleText
             xTitleText = graph.xTitleText
@@ -101,6 +102,13 @@ DrawRankPercentage =(target, qstat) ->
             height: null,
             width: null
         },
+        navigation: {
+          buttonOptions: {
+            enabled: true
+          }
+        },
+
+        credits: { enabled: false },
 
         tooltip: {
             shared: false,
@@ -115,7 +123,7 @@ DrawRankPercentage =(target, qstat) ->
             },
             series: {
                 borderWidth: 2
-            }
+            },
             pie: {
                     allowPointSelect: true,
                     cursor: 'pointer',
@@ -232,6 +240,7 @@ DrawRankPercentage =(target, qstat) ->
                     }
                   }]
     };
+
 
 class LsGraphBase
     constructor: (target, graph_type,  qstat, full_qstat, filtered_series_name, unfiltered_series_name, filters_equal, title) ->
@@ -401,6 +410,123 @@ class LsGraphDescriptivesMultNumeric extends LsGraphBase
         qstat = @qstat
         return ([cat.answer, cat.percent] for cat in qstat.categorical_stats when !cat.is_err)
 
+class LsGraphRankAll extends LsGraphBase
+
+    constructor: ->
+        super
+        @yTitleText = 'Percentage'
+        @xTitleText = 'Rankings'
+
+
+    data: ->
+        qstat = @qstat
+
+        #result = (Number(sub.descriptive_stats.mean.toFixed(2)) for sub in qstat.sub_stats)
+        #return result
+        result = []
+        return result
+
+    full_data: ->
+        qstat = @full_qstat
+        #result = (Number(sub.descriptive_stats.mean.toFixed(2)) for sub in qstat.sub_stats)
+        #return result
+        result = []
+        return result
+
+    category_labels: ->
+        qstat = @full_qstat
+        return qstat.rank_labels
+
+    category_data: ->
+        qstat = @qstat
+        # return ([cat.answer, cat.percent] for cat in qstat.categorical_stats when !cat.is_err)
+
+    chart_args: ->
+        qstat = @qstat
+        ca = chart_args(@)
+        ca.chart.type = 'column'
+        ca.series = qstat.rank_percentage
+        ca.legend =   { layout: 'vertical'}
+        ca.plotOptions.series = { pointWidth: 4, pointPadding: 0.2, borderWidth: 0 }        # borderWidth: 1,
+        ca.yAxis.max = 20
+        # ca.navigation.buttonOptions.enabled = true
+        # backgroundColor:
+        #     Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
+        # shadow: true
+        #  }
+        # ca.plotOptions.bar.dataLabels = { enabled: true }
+        return ca
+    draw: ->
+        # Draw chart
+
+        highchart = $(@$target).highcharts(@chart_args());
+        highchart = $(highchart).highcharts()
+
+        $(@$target).find('.highcharts-container').addClass('widget-resize-hook');
+
+        return
+
+
+class LsGraphRank extends LsGraphBase
+
+    constructor: ->
+        super
+        @yTitleText = 'Percentage'
+        @xTitleText = 'Most Important Reason'
+        Highcharts.setOptions chart: events: load: ->
+          label = @renderer.label('* Reason was not selected').css(
+            width: '400px'
+            fontSize: '12px').attr(
+            'stroke': 'silver'
+            'stroke-width': 0
+            'r': 2
+            'padding': 5).add()
+          label.align Highcharts.extend(label.getBBox(),
+            align: 'left'
+            x: 20
+            verticalAlign: 'bottom'
+            y: 15), null, 'spacingBox'
+          return
+
+
+    data: ->
+        qstat = @qstat
+        result = []
+        return result
+
+    full_data: ->
+        qstat = @full_qstat
+        result = []
+        return result
+
+    category_labels: ->
+        qstat = @full_qstat
+        return qstat.rank_labels
+
+    category_data: ->
+        qstat = @qstat
+        # return ([cat.answer, cat.percent] for cat in qstat.categorical_stats when !cat.is_err)
+
+    chart_args: ->
+        qstat = @qstat
+        ca = chart_args(@)
+        ca.chart.type = 'column'
+        ca.series = qstat.max_rankings
+        ca.legend =   { layout: 'vertical'}
+        ca.plotOptions.series = { pointWidth: 25, pointPadding: 25 }        # borderWidth: 1,
+        ca.yAxis.max = 50
+        return ca
+
+    draw: ->
+        # Draw chart
+
+        highchart = $(@$target).highcharts(@chart_args());
+        highchart = $(highchart).highcharts()
+
+        $(@$target).find('.highcharts-container').addClass('widget-resize-hook');
+
+        return
+
 
 class LsGraphDescriptivesNumeric extends LsGraphBase
 
@@ -476,7 +602,7 @@ window.LsReport.Graph.load = (target, graph_type, qstat, full_qstat, series_name
         when 'mult_numeric', 'list_comment', 'mult'
             chart = new LsGraphDescriptivesMultNumeric(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
         when 'rank'
-            DrawRankPercentage(target,qstat)
+            chart = new LsGraphRank(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
         when 'numeric'
             # Only graph if the data is there
             if !$.isEmptyObject(qstat.descriptive_stats)

@@ -28,7 +28,8 @@ module LimeExt::LimeStat
             :comments,
             :rank_labels,
             :rank_frequencies,
-            :rank_percentage
+            :rank_percentage,
+            :max_rankings
 
 
 
@@ -43,7 +44,8 @@ module LimeExt::LimeStat
       @sub_stats = []
       @rank_labels = []
       @rank_frequencies = []
-      @rank_percentage = []
+      @rank_percentage = {}
+      @max_rankings = {}
       @categorical_stats = []
       @descriptive_stats = nil
       @comments = nil
@@ -289,14 +291,14 @@ module LimeExt::LimeStat
     end
 
     # Return array of categorical_statistics
-    def self.generate_stats question, qtype, data, data_labels, error_labels, related_data
+    def self.generate_stats question, qtype, data, data_labels, error_labels, related_data, total
       data ||= []
       all_results = []
       # Generate stats for each category
       related_data.each do |code, data|
         results = []
         data_labels.each do |code, val|
-          cstat = self.new question, code, results.size, qtype, data, data_labels, error_labels
+          cstat = self.new question, code, results.size, qtype, data, data_labels, error_labels, total
           results.push cstat
         end
         all_results.push results
@@ -305,7 +307,7 @@ module LimeExt::LimeStat
     end
 
     # Return statistics for a single category
-    def initialize question, code, item_id, qtype, data, data_labels, error_labels
+    def initialize question, code, item_id, qtype, data, data_labels, error_labels, total
       data ||= []
       @question = question
       @data_labels = data_labels
@@ -314,7 +316,7 @@ module LimeExt::LimeStat
       @code = code
       @item_id = item_id
       @qtype = qtype
-      @total = data.count
+      @total = total
       @is_err = !data_labels.keys.include?(code)
       @answer = data_labels[code] || error_labels[code] || code
       # count occurrences or include? if is array
@@ -483,25 +485,26 @@ module LimeExt::LimeStat
       qstat = QuestionStat.new rs
       # Generate Categorical stats
       qstat.categorical_stats = RankStatistics.generate_stats rs.question,
-        rs.qtype, rs.data, rs.data_labels, rs.error_labels, rs.related_data
+        rs.qtype, rs.data, rs.data_labels, rs.error_labels, rs.related_data,  rs.data.compact.count
       rank_total = rs.related_data.length
-      qstat.rank_labels = ("Rank 1".."Rank #{rank_total}").to_a
-      rs.data_labels.values.each_with_index do |choice, index|
-        choice_data = { name: choice }
-        choice_percentage = { name: choice }
-        choice_rank_totals = []
-        choice_rank_percentage = []
-        rank_total.times do |n|
-          choice_rank_totals << qstat.categorical_stats[index][n].frequency
-          choice_rank_percentage << { y: qstat.categorical_stats[index][n].percent.round(2),
-                                      n: qstat.categorical_stats[index][n].frequency
-                                    }
+      qstat.rank_labels = ("Reason 1".."Reason #{rank_total}").to_a
+      qstat.max_rankings = rs.data_labels.values.map {|value| {name: value, data: Array.new(rank_total, 0)}}
+      qstat.rank_percentage = rs.data_labels.values.map {|value| {name: value, data: [] }}
+      qstat.categorical_stats.each_with_index do |categorical_stat, i|
+        frequency_rank = categorical_stat.map {|x| x.frequency }
+        percent_rank = categorical_stat.map {|x| x.percent.round(2) }
+        highest_ranking = categorical_stat[frequency_rank.index(frequency_rank.max)]
+        qstat.max_rankings.map do |ranking|
+          ranking[:data][i] = highest_ranking.percent.round(2) if ranking[:name] == highest_ranking.answer
         end
-        choice_data[:data] = choice_rank_totals
-        choice_percentage[:data] = choice_rank_percentage
-        qstat.rank_frequencies << choice_data
-        qstat.rank_percentage << choice_percentage
+        percent_rank.each_with_index do |ranking, j|
+          qstat.rank_percentage[j][:data] << ranking
+        end
+        frequency_rank.each_with_index do |ranking, j|
+          qstat.rank_percentage[j][:data] << ranking
+        end
       end
+      qstat.max_rankings.map {|x| x[:name] = x[:name] + '*' if x[:data].sum == 0}
       return qstat
     end
 
