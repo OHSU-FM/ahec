@@ -108,6 +108,8 @@ DrawRankPercentage =(target, qstat) ->
           }
         },
 
+        credits: { enabled: false },
+
         tooltip: {
             shared: false,
             positioner: -> {
@@ -238,6 +240,7 @@ DrawRankPercentage =(target, qstat) ->
                     }
                   }]
     };
+
 
 class LsGraphBase
     constructor: (target, graph_type,  qstat, full_qstat, filtered_series_name, unfiltered_series_name, filters_equal, title) ->
@@ -412,7 +415,7 @@ class LsGraphRankAll extends LsGraphBase
     constructor: ->
         super
         @yTitleText = 'Percentage'
-        @xTitleText = 'Ranked'
+        @xTitleText = 'Rankings'
 
 
     data: ->
@@ -469,7 +472,21 @@ class LsGraphRank extends LsGraphBase
     constructor: ->
         super
         @yTitleText = 'Percentage'
-        @xTitleText = 'Top Most Ranked'
+        @xTitleText = 'Most Important Reason'
+        Highcharts.setOptions chart: events: load: ->
+          label = @renderer.label('* Reason was not selected').css(
+            width: '400px'
+            fontSize: '12px').attr(
+            'stroke': 'silver'
+            'stroke-width': 0
+            'r': 2
+            'padding': 5).add()
+          label.align Highcharts.extend(label.getBBox(),
+            align: 'left'
+            x: 20
+            verticalAlign: 'bottom'
+            y: 15), null, 'spacingBox'
+          return
 
 
     data: ->
@@ -499,6 +516,7 @@ class LsGraphRank extends LsGraphBase
         ca.plotOptions.series = { pointWidth: 25, pointPadding: 25 }        # borderWidth: 1,
         ca.yAxis.max = 50
         return ca
+
     draw: ->
         # Draw chart
 
@@ -585,7 +603,6 @@ window.LsReport.Graph.load = (target, graph_type, qstat, full_qstat, series_name
             chart = new LsGraphDescriptivesMultNumeric(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
         when 'rank'
             chart = new LsGraphRank(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
-            # chart = new LsGraphRankAll(target, graph_type, qstat, full_qstat, series_name, unfiltered_series_name, filters_equal, title)
         when 'numeric'
             # Only graph if the data is there
             if !$.isEmptyObject(qstat.descriptive_stats)
