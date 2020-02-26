@@ -10,6 +10,7 @@ gem 'whenever', require: false
 gem 'nested_form_fields'
 gem 'turbolinks', '~> 5.0', '>= 5.0.1'
 gem 'devise_invitable'
+gem 'rake', '13.0'
 
 
 # Database
