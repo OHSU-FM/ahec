@@ -365,7 +365,7 @@ DEPENDENCIES
   better_errors
   binding_of_caller
   bootstrap-sass
-  bundler (~> 1.17, >= 1.17.3)
+  bundler
   byebug
   cancancan
   capybara
