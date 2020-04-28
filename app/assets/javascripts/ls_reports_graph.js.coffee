@@ -514,7 +514,7 @@ class LsGraphRank extends LsGraphBase
         ca.series = qstat.max_rankings
         ca.legend =   { layout: 'vertical'}
         ca.plotOptions.series = { pointWidth: 25, pointPadding: 25 }        # borderWidth: 1,
-        ca.yAxis.max = 50
+        ca.yAxis.max = qstat.max_percentage
         ca.tooltip.pointFormatter = -> @reason + '<br>' + @y + '% , n: '+ @frequency
 
         return ca

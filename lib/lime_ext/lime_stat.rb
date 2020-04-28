@@ -30,7 +30,8 @@ module LimeExt::LimeStat
             :rank_labels,
             :rank_frequencies,
             :rank_percentage,
-            :max_rankings
+            :max_rankings,
+            :max_percentage
 
 
 
@@ -47,6 +48,7 @@ module LimeExt::LimeStat
       @rank_frequencies = []
       @rank_percentage = {}
       @max_rankings = {}
+      @max_percentage = 0
       @categorical_stats = []
       @descriptive_stats = nil
       @comments = nil
@@ -516,6 +518,8 @@ module LimeExt::LimeStat
       end
 
       qstat.max_rankings.map {|x| x[:name] = x[:name] + '*' if x[:data].map { |d| d[:y] }.sum == 0 }
+      max_percentage = [qstat.rank_percentage.map {|x| x[:data]}.compact.max.max + 10, 100].min
+      qstat.max_percentage = [max_percentage, 50].max
 
       return qstat
     end
