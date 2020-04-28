@@ -4,6 +4,7 @@ module LimeExt::LimeStat
         attr_accessor :response_count,  # The number of valid responses
             # % of responses received
             :response_rate,
+            :response_total,
             # Statistics related to lime_answers
             :categorical_stats,
             # Numerical Stats
@@ -50,6 +51,7 @@ module LimeExt::LimeStat
       @descriptive_stats = nil
       @comments = nil
       @response_count = @response_set.response_count
+      @response_total = @response_set.response_total
       @qid = @question.qid
       @qtype = @question.qtype
       @title = @question.title
