@@ -495,7 +495,15 @@ module LimeExt::LimeStat
         percent_rank = categorical_stat.map {|x| x.percent.round(2) }
         highest_ranking = categorical_stat[frequency_rank.index(frequency_rank.max)]
         qstat.max_rankings.map do |ranking|
-          ranking[:data][i] = highest_ranking.percent.round(2) if ranking[:name] == highest_ranking.answer
+          if ranking[:name] == highest_ranking.answer
+            ranking[:data][i] = {
+                                  y: highest_ranking.percent.round(2),
+                                  frequency: highest_ranking.frequency,
+                                  reason:  highest_ranking.answer
+                                }
+          else
+            ranking[:data][i] = {y: 0}
+          end
         end
         percent_rank.each_with_index do |ranking, j|
           qstat.rank_percentage[j][:data] << ranking
@@ -504,7 +512,9 @@ module LimeExt::LimeStat
           qstat.rank_percentage[j][:data] << ranking
         end
       end
-      qstat.max_rankings.map {|x| x[:name] = x[:name] + '*' if x[:data].sum == 0}
+
+      qstat.max_rankings.map {|x| x[:name] = x[:name] + '*' if x[:data].map { |d| d[:y] }.sum == 0 }
+
       return qstat
     end
 
